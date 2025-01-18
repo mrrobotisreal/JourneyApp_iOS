@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>UIAppFonts</key>
+	<array>
+		<string>bauhausheavy.ttf</string>
+		<string>Bauhaus-Light.ttf</string>
+		<string>Bauhaus-Medium.ttf</string>
+		<string>hummingbird.ttf</string>
+		<string>LobsterTwo-Bold.ttf</string>
+		<string>LobsterTwo-Regular.ttf</string>
+		<string>nexascriptheavy.otf</string>
+		<string>NexaScriptLight.otf</string>
+		<string>NotoSerif.ttf</string>
+		<string>Roboto-Bold.ttf</string>
+		<string>Roboto-Regular.ttf</string>
+		<string>SpaceMono-Regular.ttf</string>
+		<string>Ubuntu-Bold.ttf</string>
+		<string>Ubuntu-Regular.ttf</string>
+	</array>
+</dict>
+</plist>

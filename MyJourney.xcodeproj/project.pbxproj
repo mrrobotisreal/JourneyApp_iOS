@@ -29,9 +29,22 @@
 		74B7FFF72D3A293800719D0A /* MyJourneyUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MyJourneyUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		74B700322D3A4D0E00719D0A /* Exceptions for "MyJourney" folder in "MyJourney" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 74B7FFDA2D3A293500719D0A /* MyJourney */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		74B7FFDD2D3A293500719D0A /* MyJourney */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				74B700322D3A4D0E00719D0A /* Exceptions for "MyJourney" folder in "MyJourney" target */,
+			);
 			path = MyJourney;
 			sourceTree = "<group>";
 		};
@@ -335,6 +348,7 @@
 				DEVELOPMENT_ASSET_PATHS = "\"MyJourney/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = MyJourney/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -363,6 +377,7 @@
 				DEVELOPMENT_ASSET_PATHS = "\"MyJourney/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = MyJourney/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
