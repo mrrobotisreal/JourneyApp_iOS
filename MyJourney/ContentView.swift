@@ -43,20 +43,20 @@ struct ContentView: View {
                     .transition(.asymmetric(insertion: .move(edge: .trailing), removal: .move(edge: .leading)))
             } else {
                 NavigationStack(path: $path) {
-                    HomeView()
+                    HomeView(path: $path)
                         .navigationDestination(for: String.self) { route in
                             switch route {
                             case "createNewEntry":
-//                                NewEntryView()
-                                HomeView()
+                                NewEntryView()
+//                                HomeView(path: $path)
                             case "settings":
 //                                SettingsView()
-                                HomeView()
+                                HomeView(path: $path)
                             case "advancedSearch":
 //                                SearchView()
-                                HomeView()
+                                HomeView(path: $path)
                             default:
-                                HomeView()
+                                HomeView(path: $path)
                             }
                         }
                 }

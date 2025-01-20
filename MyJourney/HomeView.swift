@@ -9,6 +9,7 @@ import SwiftUI
 import SwiftData
 
 struct HomeView: View {
+    @Binding var path: NavigationPath
     @State private var hasEntries = false
     @State private var showActionSheet = false
     @State private var searchQuery: String = ""
@@ -53,7 +54,7 @@ struct HomeView: View {
                         .padding()
                     
                     Button(action: {
-                        // action here...
+                        path.append("createNewEntry")
                     }) {
                         Image(systemName: "lightbulb.max.fill")
                             .foregroundColor(.white)
@@ -110,7 +111,7 @@ struct HomeView: View {
                         .font(.custom("Nexa Script Heavy", size: 18))
                     
                     Button(action: {
-                        // action here...
+                        path.append("createNewEntry")
                     }) {
                         Image(systemName: "lightbulb.max.fill")
                             .foregroundColor(.white)
@@ -270,5 +271,13 @@ struct HomeView: View {
 }
 
 #Preview {
-    HomeView()
+    HomePreviewWrapper()
+}
+
+struct HomePreviewWrapper: View {
+    @State private var path = NavigationPath()
+    
+    var body: some View {
+        HomeView(path: $path)
+    }
 }

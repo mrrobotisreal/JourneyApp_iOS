@@ -141,6 +141,7 @@ struct CreateAccountView: View {
         errorMessage = ""
         
         do {
+            isLoading = true
             let isAvailable = try await checkUsernameAvailability(viewModel.username)
             
             if !isAvailable {
@@ -160,6 +161,7 @@ struct CreateAccountView: View {
             } else {
                 errorMessage = "Failed to create account. Try again later."
             }
+            isLoading = false
         } catch {
             errorMessage = "Error creating account: \(error.localizedDescription)"
         }
@@ -178,6 +180,7 @@ struct CreateAccountView: View {
         errorMessage = ""
         
         do {
+            isLoading = true
             let success = try await handleLogin(username: viewModel.username, password: passwordViewModel.password)
             
             if success {
@@ -185,6 +188,7 @@ struct CreateAccountView: View {
             } else {
                 errorMessage = "Failed to login. Check your username and password to ensure they're correctly entered."
             }
+            isLoading = false
         } catch {
             errorMessage = "Error loggin in: \(error.localizedDescription)"
         }
