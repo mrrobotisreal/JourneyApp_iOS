@@ -11,9 +11,12 @@ import SwiftData
 struct ContentView: View {
 //    @Environment(\.modelContext) private var modelContext
 //    @Query private var items: [Item]
+    @EnvironmentObject var appState: AppState
     @State private var userName: String = ""
     @State private var isNameEntered = false
     @State private var shouldNavigate = false
+    
+    @State private var path = NavigationPath()
 
     var body: some View {
         ZStack {
@@ -32,65 +35,49 @@ struct ContentView: View {
             )
             .edgesIgnoringSafeArea(.all)
             
-            if !shouldNavigate {
+            if !appState.didFinishSplash {
                  SplashView()
                     .transition(.asymmetric(insertion: .move(edge: .trailing), removal: .move(edge: .leading)))
-            } else {
+            } else if !appState.isLoggedIn {
                 CreateAccountView()
                     .transition(.asymmetric(insertion: .move(edge: .trailing), removal: .move(edge: .leading)))
-//                JournalView(userName: userName)
-//                    .transition(.asymmetric(insertion: .move(edge: .trailing), removal: .move(edge: .leading)))
+            } else {
+                NavigationStack(path: $path) {
+                    HomeView()
+                        .navigationDestination(for: String.self) { route in
+                            switch route {
+                            case "createNewEntry":
+//                                NewEntryView()
+                                HomeView()
+                            case "settings":
+//                                SettingsView()
+                                HomeView()
+                            case "advancedSearch":
+//                                SearchView()
+                                HomeView()
+                            default:
+                                HomeView()
+                            }
+                        }
+                }
             }
         }
         .animation(.easeInOut, value: shouldNavigate)
         .onAppear {
             DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
-                shouldNavigate = true
+                appState.didFinishSplash = true
             }
         }
-//        NavigationSplitView {
-//            List {
-//                ForEach(items) { item in
-//                    NavigationLink {
-//                        Text("Item at \(item.timestamp, format: Date.FormatStyle(date: .numeric, time: .standard))")
-//                    } label: {
-//                        Text(item.timestamp, format: Date.FormatStyle(date: .numeric, time: .standard))
-//                    }
-//                }
-//                .onDelete(perform: deleteItems)
-//            }
-//            .toolbar {
-//                ToolbarItem(placement: .navigationBarTrailing) {
-//                    EditButton()
-//                }
-//                ToolbarItem {
-//                    Button(action: addItem) {
-//                        Label("Add Item", systemImage: "plus")
-//                    }
-//                }
-//            }
-//        } detail: {
-//            Text("Select an item")
-//        }
     }
-
-//    private func addItem() {
-//        withAnimation {
-//            let newItem = Item(timestamp: Date())
-//            modelContext.insert(newItem)
-//        }
-//    }
-//
-//    private func deleteItems(offsets: IndexSet) {
-//        withAnimation {
-//            for index in offsets {
-//                modelContext.delete(items[index])
-//            }
-//        }
-//    }
 }
 
-#Preview {
+#Preview("Logged out") {
     ContentView()
-        .modelContainer(for: Item.self, inMemory: true)
+        .environmentObject(AppState())
+}
+
+#Preview("Logged in") {
+    let testAppState = AppState()
+    testAppState.isLoggedIn = true
+    return ContentView().environmentObject(testAppState)
 }
