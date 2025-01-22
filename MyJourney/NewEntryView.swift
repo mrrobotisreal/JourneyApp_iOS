@@ -18,7 +18,19 @@ struct NewEntryView: View {
     @State private var images: [UIImage] = []
     @State private var showImagePicker = false
     @State private var pickerSource: UIImagePickerController.SourceType = .photoLibrary
-    @State private var entryText: String = ""
+//    @State private var entryText: String = ""
+    @State private var entryText: String = """
+    # My Title
+    
+    Some text with *bold* and ~underline~.
+    
+    - A bullet list item
+    - [ ] An unchecked checkbox
+    
+    ## Subheading
+    
+    Here is -strikethrough- and {color: red}red text{color} and nesting like *bold ~underlined nested~ inside*.
+    """
     
     enum ViewMode: String, CaseIterable {
         case write = "Write"
@@ -86,23 +98,21 @@ struct NewEntryView: View {
                     
                     switch selectedViewMode {
                     case .write:
-//                        if entryText.isEmpty {
-//                            Text("Start writing your entry here...")
-//                                .font(.custom("Nexa Script Light", size: 18))
-//                                .foregroundColor(Color(red: 0.008, green: 0.157, blue: 0.251))
-//                                .padding(.horizontal)
-//                        }
+                        if entryText.isEmpty {
+                            Text("Start writing your entry below...")
+                                .font(.system(size: 16))
+                                .foregroundColor(Color(red: 0.008, green: 0.157, blue: 0.251))
+                                .padding(.horizontal)
+                        }
                         TextEditor(text: $entryText)
                             .padding()
-                            .font(.custom("Nexa Script Light", size: 18))
+                            .font(.system(size: 16))
                             .foregroundColor(Color(red: 0.008, green: 0.157, blue: 0.251))
                     case .preview:
                         ScrollView(.vertical) {
-                            let attributed = parseSimpleMarkdown(entryText)
+                            let attributed = parseAdvancedMarkdown(entryText)
                             Text(attributed)
-//                                .font(.custom("Nexa Script Light", size: 18))
-//                                .foregroundColor(Color(red: 0.008, green: 0.157, blue: 0.251))
-                                .padding(.horizontal)
+                                .font(.system(size: 16))
                             
                             Spacer()
                         }
@@ -119,25 +129,6 @@ struct NewEntryView: View {
                     }
                     .pickerStyle(.segmented)
                     .padding()
-//                    ScrollView(.vertical) {
-//                        Text("Start writing your entry here...")
-//                            .font(.custom("Nexa Script Light", size: 18))
-//                            .foregroundColor(Color(red: 0.008, green: 0.157, blue: 0.251))
-//                            .padding(.horizontal)
-//                        
-//                        Spacer()
-//                    }
-//                    .padding()
-                    
-//                    ScrollView(.vertical) {
-//                        TextField("Start writing your entry here...", text: $entryText)
-//                            .font(.custom("Nexa Script Light", size: 18))
-//                            .foregroundColor(Color(red: 0.008, green: 0.157, blue: 0.251))
-//                            .padding(.horizontal)
-//                        
-//                        Spacer()
-//                    }
-//                    .padding()
                 }
                 .frame(maxWidth: 360)
                 .frame(maxHeight: 600)
