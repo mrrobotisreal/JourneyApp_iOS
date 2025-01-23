@@ -1,8 +1,10 @@
 # My Journey
 
-_The perfect companion for your introspective journey, keeping your thoughts organized and memories at the touch of your finger._
+![Cover Image](https://winapps-solutions-llc.s3.us-west-2.amazonaws.com/products/journey-app/MyJourneyDocumentationCoverImage.png)
 
-## What is "My Journey"?
+### What is "My Journey"?
+
+> _"The perfect companion for your introspective journey, keeping your thoughts organized and your memories accessible at the touch of your finger."_
 
 **My Journey** is a journaling app written entirely in Swift for iOS. It provides users with the ability to create an account, write journal entries with advanced markdown (headings, lists, checkboxes, bold, italic, strikethrough, code, colored text, nested tokens, etc.), images, locations, and tags. The entries all include a date, and can be searched and filtered with optimized search algorithms as well as custom tags created by the user. Users are able to log in on other devices and still maintain access to their data (all data is stored securely on a server and only accessible to the user who created it), and all entries are able to be downloaded to the device for offline viewing and editing. Entries that are created or edited while the user is offline will be stored on the device until a network connection is established again, at which point the data will be sent to the server and stored. When a user has logged in, a session is created and a JSON Web Token is stored on the device which allows the user to remain logged in for a configurable amount of time, but it's defaulted to 7 days and is revoked upon clicking to logout.
 
