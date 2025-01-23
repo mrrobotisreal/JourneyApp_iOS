@@ -48,7 +48,9 @@ struct ContentView: View {
                             switch route {
                             case "createNewEntry":
                                 NewEntryView()
-//                                HomeView(path: $path)
+                            case "viewEntry":
+//                                ViewEntry()
+                                HomeView(path: $path)
                             case "settings":
 //                                SettingsView()
                                 HomeView(path: $path)
@@ -64,7 +66,7 @@ struct ContentView: View {
         }
         .animation(.easeInOut, value: shouldNavigate)
         .onAppear {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) {
                 appState.didFinishSplash = true
             }
         }

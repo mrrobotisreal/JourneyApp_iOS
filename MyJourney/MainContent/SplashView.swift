@@ -19,22 +19,15 @@ struct SplashView: View {
                 .foregroundColor(Color(red: 0.008, green: 0.157, blue: 0.251))
                 .padding(.vertical, 2)
             
+            Image("MyJourneyAppIcon1024x1024")
+                .resizable()
+                .scaledToFit()
+                .cornerRadius(12)
+                .shadow(color: Color.black.opacity(0.9), radius: 7, x: 2, y: 5)
+            
             Text("Your personal journal for letting your creativity flow, tracking your daily progress toward goals, or even just writing about the highlights of your day...")
                 .font(.custom("Nexa Script Light", size: 12))
                 .foregroundColor(Color(red: 0.008, green: 0.157, blue: 0.251))
-            
-//                    TextField("Enter your name here", text: $userName)
-//                        .textFieldStyle(RoundedBorderTextFieldStyle())
-//                        .font(.custom("LobsterTwo", size: 18))
-//                        .padding(.horizontal, 40)
-//
-//                    Button("Continue") {
-//                        UserDefaults.standard.set(userName, forKey: "UserName")
-//                        isNameEntered = true
-//                    }
-//                    .padding()
-//                    .font(.custom("LobsterTwo", size: 24))
-//                    .disabled(userName.isEmpty)
             
         }
         .frame(maxWidth: 340)
@@ -46,12 +39,7 @@ struct SplashView: View {
             RoundedRectangle(cornerRadius: 12)
                 .stroke(Color(red: 0.008, green: 0.282, blue: 0.451), lineWidth: 2)
         )
-        .shadow(color: Color.black.opacity(0.2), radius: 5, x: 0, y: 3)
-//        .onAppear {
-//            DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
-//                shouldNavigate = false
-//            }
-//        }
+        .shadow(color: Color.black.opacity(0.9), radius: 7, x: 0, y: 5)
     }
 }
 
