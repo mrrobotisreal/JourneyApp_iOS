@@ -44,7 +44,7 @@ struct NewEntryView: View {
             Color(red: 0.533, green: 0.875, blue: 0.949)
                 .ignoresSafeArea()
             
-            VStack(spacing: 20) {
+            VStack(spacing: 0) {
                 HStack {
                     Button(action: {
                         // action here...
@@ -79,21 +79,25 @@ struct NewEntryView: View {
                 Spacer()
                 
                 VStack {
-                    if hasImages {
+                    if images.count > 0 {
                         ScrollView(.horizontal) {
                             HStack {
                                 ForEach(images, id: \.self) { img in
                                     Image(uiImage: img)
                                         .resizable()
                                         .scaledToFill()
-                                        .frame(width: 120, height: 120)
+                                        .frame(width: 112, height: 112)
                                         .clipped()
+                                        .cornerRadius(8)
+                                        .shadow(color: Color.black.opacity(0.8), radius: 3, x: 0, y: 2)
                                 }
                             }
+                            .padding(.vertical, 7)
+                            .padding(.horizontal, 3)
                             
-                            Spacer()
+//                            Spacer()
                         }
-                        .padding()
+//                        .padding()
                     }
                     
                     switch selectedViewMode {
@@ -225,6 +229,7 @@ struct NewEntryView: View {
                     Button(action: {
                         pickerSource = .camera
                         showImagePicker = true
+                        showCameraSheet = false
                     }) {
                         Image(systemName: "camera.fill")
                             .foregroundColor(.white)
@@ -249,6 +254,7 @@ struct NewEntryView: View {
                     Button(action: {
                         pickerSource = .photoLibrary
                         showImagePicker = true
+                        showCameraSheet = false
                     }) {
                         Image(systemName: "photo.fill.on.rectangle.fill")
                             .foregroundColor(.white)
