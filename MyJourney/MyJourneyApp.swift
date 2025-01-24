@@ -35,6 +35,7 @@ struct MyJourneyApp: App {
 }
 
 class AppState: ObservableObject {
+    @Published var username: String? = nil
     @Published var isLoggedIn: Bool = false
     @Published var didFinishSplash: Bool = false
 }

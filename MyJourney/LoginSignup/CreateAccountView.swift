@@ -246,6 +246,11 @@ extension CreateAccountView {
         let jsonObject = try JSONSerialization.jsonObject(with: data) as? [String: Any]
         let success = jsonObject?["success"] as? Bool ?? false
         
+        if success {
+            appState.username = username
+            appState.isLoggedIn = true
+        }
+        
         return success
     }
     
@@ -275,6 +280,7 @@ extension CreateAccountView {
         let success = jsonObject?["success"] as? Bool ?? false
         
         if success {
+            appState.username = username
             appState.isLoggedIn = true
         }
         

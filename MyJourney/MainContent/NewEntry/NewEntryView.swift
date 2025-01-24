@@ -9,6 +9,9 @@ import SwiftUI
 import UIKit
 
 struct NewEntryView: View {
+    @EnvironmentObject var appState: AppState
+    @State private var isSubmitting: Bool = false
+    @State private var isSavedSuccessfully: Bool = false
     @State private var showLocationSheet: Bool = false
     @State private var showPeopleSheet: Bool = false
     @State private var showCameraSheet: Bool = false
@@ -18,19 +21,24 @@ struct NewEntryView: View {
     @State private var images: [UIImage] = []
     @State private var showImagePicker = false
     @State private var pickerSource: UIImagePickerController.SourceType = .photoLibrary
-//    @State private var entryText: String = ""
-    @State private var entryText: String = """
-    # My Title
+    @State private var locations: [LocationData] = []
+    @State private var tags: [TagData] = []
+    @State private var entryText: String = ""
+//    @State private var entryText: String = """
+//    # My Title
+//    
+//    Some text with *bold* and ~underline~.
+//    
+//    - A bullet list item
+//    - [ ] An unchecked checkbox
+//    
+//    ## Subheading
+//    
+//    Here is -strikethrough- and {color: red}red text{color} and nesting like *bold ~underlined nested~ inside*.
+//    """
     
-    Some text with *bold* and ~underline~.
-    
-    - A bullet list item
-    - [ ] An unchecked checkbox
-    
-    ## Subheading
-    
-    Here is -strikethrough- and {color: red}red text{color} and nesting like *bold ~underlined nested~ inside*.
-    """
+    let date = getDateString()
+    let timestamp = getTimestampString()
     
     enum ViewMode: String, CaseIterable {
         case write = "Write"
@@ -57,21 +65,27 @@ struct NewEntryView: View {
                     
                     Spacer()
                     
-                    Text("19 January 2025")
+                    Text(date)
                         .padding()
                         .font(.custom("Nexa Script Heavy", size: 24))
                         .foregroundColor(.white)
                     
                     Spacer()
                     
-                    Button(action: {
-                        // action here...
-                    }) {
-                        Text("Save")
-                            .font(.custom("Nexa Script Light", size: 18))
-                            .foregroundColor(.white)
+                    if isSubmitting {
+                        ProgressView()
+                            .progressViewStyle(CircularProgressViewStyle())
+                            .padding()
+                    } else {
+                        Button(action: {
+                            submitEntry()
+                        }) {
+                            Text("Save")
+                                .font(.custom("Nexa Script Light", size: 18))
+                                .foregroundColor(.white)
+                        }
+                            .padding()
                     }
-                        .padding()
                 }
                 .frame(maxWidth: .infinity)
                 .background(Color(red: 0.008, green: 0.282, blue: 0.451))
@@ -420,10 +434,44 @@ struct NewEntryView: View {
                 }
             }
         }
+        .alert("Saved successfully!", isPresented: $isSavedSuccessfully) {
+            Button("OK", role: .cancel) {
+                isSavedSuccessfully = false
+            }
+        }
     }
 }
 
 extension NewEntryView {
+    private func submitEntry() {
+        guard let username = appState.username, !entryText.isEmpty else { return }
+        isSubmitting = true
+        
+        Task {
+            do {
+                let uuid = try await createNewEntryOnServer(
+                    username: username,
+                    text: entryText,
+                    locations: locations.isEmpty ? nil : locations,
+                    tags: tags.isEmpty ? nil : tags
+                )
+                print("Got uuid: \(uuid) from server")
+                
+                try await uploadImages(
+                    username: username,
+                    uuid: uuid,
+                    images: images
+                )
+                print("All images uploaded!")
+                isSavedSuccessfully = true
+            } catch {
+                print("Error: \(error)")
+                isSavedSuccessfully = false
+            }
+            isSubmitting = false
+        }
+    }
+    
     /// A simple markdown parser that handles:
     /// *bold*  -> bold text
     /// _italic_ -> italic text
@@ -519,4 +567,11 @@ struct ImagePicker: UIViewControllerRepresentable {
 
 #Preview {
     NewEntryView()
+}
+
+#Preview("Logged in") {
+    let testAppState = AppState()
+    testAppState.isLoggedIn = true
+    testAppState.username = "test"
+    return NewEntryView().environmentObject(testAppState)
 }
