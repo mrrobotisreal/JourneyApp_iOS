@@ -38,7 +38,7 @@
 
 ## Demo
 
-![MyJourneyApp Demo Gif](https://winapps-solutions-llc.s3.us-west-2.amazonaws.com/products/journey-app/MyJourneyApp_Demo.gif)
+![MyJourneyApp Demo Gif](https://winapps-solutions-llc.s3.us-west-2.amazonaws.com/journey-app/Demo_2025_01_26.gif)
 
 More demos will be added soon... Thanks for your patience!
 
