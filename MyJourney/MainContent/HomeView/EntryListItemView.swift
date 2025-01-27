@@ -154,10 +154,13 @@ struct EntryListItemView: View {
                                                     .clipped()
                                                     .cornerRadius(8)
                                                     .shadow(color: Color.black.opacity(0.8), radius: 3, x: 0, y: 2)
-                                            case .failure(_):
+                                            case .failure(let error):
                                                 Color.gray
                                                     .frame(width: 108, height: 108)
                                                     .overlay(Text("Error").foregroundColor(.white))
+                                                    .onAppear {
+                                                        print("AsyncImage error for \(url): \(error.localizedDescription)")
+                                                    }
                                             @unknown default:
                                                 EmptyView()
                                             }
@@ -209,9 +212,7 @@ struct EntryListItemView: View {
         var tempURLs: [URL] = []
         for key in entryListItem.imageURLs {
             do {
-                print("Attempting to fetch pre-signed url")
                 let presignedURL = try await getPresignedURLForKey(key)
-                print("url: ", presignedURL)
                 tempURLs.append(presignedURL)
             } catch {
                 print("Presign GET error for \(key): \(error)")
@@ -236,9 +237,9 @@ extension EntryListItem {
     Here is -strikethrough- and {color: red}red text{color} and nesting like *bold ~underlined nested~ inside*.
     """,
         imageURLs: [
-            "images/test/8d483fed-a0f7-46b7-ba97-d705ad6bba2b/image0.jpg",
-            "images/test/8d483fed-a0f7-46b7-ba97-d705ad6bba2b/image1.jpg",
-            "images/test/8d483fed-a0f7-46b7-ba97-d705ad6bba2b/image2.jpg"
+            "images/test/07238b12-7eb5-42ca-888f-3d69c87a6258/image0.jpg",
+            "images/test/07238b12-7eb5-42ca-888f-3d69c87a6258/image1.jpg",
+            "images/test/07238b12-7eb5-42ca-888f-3d69c87a6258/image2.jpg"
         ],
         timestamp: "2025-01-26T06:19:51Z"
     )

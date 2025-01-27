@@ -81,5 +81,6 @@ struct ContentView: View {
 #Preview("Logged in") {
     let testAppState = AppState()
     testAppState.isLoggedIn = true
+    testAppState.username = "test"
     return ContentView().environmentObject(testAppState)
 }
