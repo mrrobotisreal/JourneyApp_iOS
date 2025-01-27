@@ -67,12 +67,16 @@ struct CreateAccountView: View {
                     viewModel.toggleIsLoginVisible()
                 }
                 .font(.custom("Nexa Script Light", size: 16))
+                .foregroundColor(Color(red: 0.008, green: 0.282, blue: 0.451))
                 
                 Spacer()
                 
                 if isLoading {
                     ProgressView()
-                        .progressViewStyle(CircularProgressViewStyle())
+                        .progressViewStyle(
+                            CircularProgressViewStyle(tint: Color(red: 0.008, green: 0.282, blue: 0.451))
+                        )
+                        .tint(Color(red: 0.008, green: 0.282, blue: 0.451))
                         .padding()
                 } else {
                     if viewModel.isLoginVisible {
@@ -170,10 +174,12 @@ struct CreateAccountView: View {
     private func handleSubmitLogin() async {
         guard viewModel.isUsernameValid == true else {
             errorMessage = "Username invalid. Must be 2-32 chars, only letters, numbers, or ._-"
+            print("Username invalid. Must be 2-32 chars, only letters, numbers, or ._-")
             return
         }
         guard passwordViewModel.isPasswordValid == true else {
             errorMessage = "Password invalid. Must contain at least 1 uppercase char, 1 lowercase char, 1 number, and 1 special char."
+            print("Password invalid. Must contain at least 1 uppercase char, 1 lowercase char, 1 number, and 1 special char.")
             return
         }
         
@@ -184,6 +190,8 @@ struct CreateAccountView: View {
             let success = try await handleLogin(username: viewModel.username, password: passwordViewModel.password)
             
             if success {
+                print("Success!!!!")
+                print("Success: ", success)
                 showSuccessMessage = true
             } else {
                 errorMessage = "Failed to login. Check your username and password to ensure they're correctly entered."
@@ -255,6 +263,7 @@ extension CreateAccountView {
     }
     
     private func handleLogin(username: String, password: String) async throws -> Bool {
+        print("Attempting to login")
         guard let url = URL(string: "https://journeyapp.me/api/users/login") else {
             throw URLError(.badURL)
         }
@@ -280,6 +289,7 @@ extension CreateAccountView {
         let success = jsonObject?["success"] as? Bool ?? false
         
         if success {
+            print("Successfully logged in!")
             appState.username = username
             appState.isLoggedIn = true
         }

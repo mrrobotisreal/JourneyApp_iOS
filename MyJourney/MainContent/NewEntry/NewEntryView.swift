@@ -10,6 +10,8 @@ import UIKit
 
 struct NewEntryView: View {
     @EnvironmentObject var appState: AppState
+    @Environment(\.dismiss) private var dismiss
+    @State private var homeViewModel = HomeViewModel()
     @State private var isSubmitting: Bool = false
     @State private var isSavedSuccessfully: Bool = false
     @State private var showLocationSheet: Bool = false
@@ -74,7 +76,10 @@ struct NewEntryView: View {
                     
                     if isSubmitting {
                         ProgressView()
-                            .progressViewStyle(CircularProgressViewStyle())
+                            .progressViewStyle(
+                                CircularProgressViewStyle(tint: Color(red: 0.533, green: 0.875, blue: 0.949))
+                            )
+                            .tint(Color(red: 0.533, green: 0.875, blue: 0.949))
                             .padding()
                     } else {
                         Button(action: {
@@ -108,10 +113,7 @@ struct NewEntryView: View {
                             }
                             .padding(.vertical, 7)
                             .padding(.horizontal, 3)
-                            
-//                            Spacer()
                         }
-//                        .padding()
                     }
                     
                     switch selectedViewMode {
@@ -437,6 +439,8 @@ struct NewEntryView: View {
         .alert("Saved successfully!", isPresented: $isSavedSuccessfully) {
             Button("OK", role: .cancel) {
                 isSavedSuccessfully = false
+                dismiss()
+                homeViewModel.fetchEntries(username: appState.username ?? "")
             }
         }
     }
@@ -457,13 +461,13 @@ extension NewEntryView {
                 )
                 print("Got uuid: \(uuid) from server")
                 
-                try await uploadImages(
+                let isUploadedAndUpdated = try await uploadImages(
                     username: username,
                     uuid: uuid,
                     images: images
                 )
                 print("All images uploaded!")
-                isSavedSuccessfully = true
+                isSavedSuccessfully = isUploadedAndUpdated
             } catch {
                 print("Error: \(error)")
                 isSavedSuccessfully = false

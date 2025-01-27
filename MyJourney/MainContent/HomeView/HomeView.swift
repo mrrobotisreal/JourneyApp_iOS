@@ -9,6 +9,8 @@ import SwiftUI
 import SwiftData
 
 struct HomeView: View {
+    @EnvironmentObject var appState: AppState
+    @StateObject private var viewModel = HomeViewModel()
     @Binding var path: NavigationPath
     @State private var hasEntries = false
     @State private var showActionSheet = false
@@ -26,29 +28,29 @@ struct HomeView: View {
                         .textFieldStyle(RoundedBorderTextFieldStyle())
                         .disableAutocorrection(true)
                     
-                    Button(action: {
-                        // action here...
-                    }) {
-                        Image(systemName: "magnifyingglass")
-                            .font(.title2)
-                            .padding(6)
-                            .background(Color(red: 0.039, green: 0.549, blue: 0.749))
-                            .cornerRadius(8)
-                    }
-                    .foregroundColor(.white)
-                    .cornerRadius(12)
-                    .background(Color(red: 0.039, green: 0.549, blue: 0.749))
-                    .clipShape(RoundedRectangle(cornerRadius: 12))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 12)
-                            .stroke(Color(red: 0.008, green: 0.157, blue: 0.251), lineWidth: 2)
-                    )
+//                    Button(action: {
+//                        // action here...
+//                    }) {
+//                        Image(systemName: "magnifyingglass")
+//                            .font(.title2)
+//                            .padding(6)
+//                            .background(Color(red: 0.039, green: 0.549, blue: 0.749))
+//                            .cornerRadius(8)
+//                    }
+//                    .foregroundColor(.white)
+//                    .cornerRadius(12)
+//                    .background(Color(red: 0.039, green: 0.549, blue: 0.749))
+//                    .clipShape(RoundedRectangle(cornerRadius: 12))
+//                    .overlay(
+//                        RoundedRectangle(cornerRadius: 12)
+//                            .stroke(Color(red: 0.008, green: 0.157, blue: 0.251), lineWidth: 2)
+//                    )
                 }
                 .padding()
                 
-                Spacer()
+//                Spacer()
                 
-                if !hasEntries {
+                if viewModel.entries.count <= 0 {
                     Text("You haven't created any entries yet... Click the button below or swipe up from the bottom and open the menu to create a new entry!")
                         .font(.custom("Nexa Script Light", size: 18))
                         .padding()
@@ -73,31 +75,60 @@ struct HomeView: View {
                             .stroke(Color(red: 0.008, green: 0.157, blue: 0.251), lineWidth: 2)
                     )
                 } else {
-                    Text("Entries here...")
-                        .font(.custom("Nexa Script Light", size: 18))
-                        .padding()
+                    List {
+                        ForEach(viewModel.entries) { entry in
+                            VStack {
+                                EntryListItemView(entryListItem: entry)
+                                    .onAppear {
+                                        if entry == viewModel.entries.last {
+                                            viewModel.fetchEntries(username: appState.username ?? "")
+                                        }
+                                    }
+                            }
+                            .listRowBackground(Color.clear)
+                            .listRowInsets(EdgeInsets())
+                            .padding()
+                        }
+                        
+                        if viewModel.isLoading {
+                            HStack {
+                                Spacer()
+                                ProgressView()
+                                Spacer()
+                            }
+                        }
+                    }
+                    .listStyle(.plain)
+                    .scrollContentBackground(.hidden)
+                    .background(Color(red: 0.533, green: 0.875, blue: 0.949))
+                    .clipShape(RoundedRectangle(cornerRadius: 0))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 0)
+                            .stroke(Color(red: 0.008, green: 0.157, blue: 0.251), lineWidth: 2)
+                    )
                 }
                 
-                Spacer()
+//                Spacer()
                 
                 Button(action: {
                     showActionSheet = true
                 }) {
-                    Image(systemName: "line.3.horizontal.decrease")
-                        .font(.title2)
-                        .padding(10)
-                        .background(Color(red: 0.039, green: 0.549, blue: 0.749))
-                        .cornerRadius(8)
+                    Image(systemName: "line.3.horizontal.decrease.circle.fill")
+                        .font(.title)
+//                        .padding(10)
+//                        .background(Color(red: 0.039, green: 0.549, blue: 0.749))
+//                        .cornerRadius(8)
                 }
                 .foregroundColor(.white)
-                .cornerRadius(12)
-                .background(Color(red: 0.039, green: 0.549, blue: 0.749))
-                .clipShape(RoundedRectangle(cornerRadius: 12))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 12)
-                        .stroke(Color(red: 0.008, green: 0.157, blue: 0.251), lineWidth: 2)
-                )
+//                .cornerRadius(12)
+//                .background(Color(red: 0.039, green: 0.549, blue: 0.749))
+//                .clipShape(RoundedRectangle(cornerRadius: 12))
+//                .overlay(
+//                    RoundedRectangle(cornerRadius: 12)
+//                        .stroke(Color(red: 0.008, green: 0.157, blue: 0.251), lineWidth: 2)
+//                )
             }
+            .background(Color(red: 0.008, green: 0.282, blue: 0.451))
             
             if showActionSheet {
                 Color.black.opacity(0.3)
@@ -267,11 +298,18 @@ struct HomeView: View {
 //                Button("Cancel", role: .cancel) {}
 //            })
         }
+        .onAppear {
+             viewModel.fetchEntries(username: appState.username ?? "")
+        }
     }
 }
 
 #Preview {
-    HomePreviewWrapper()
+    let testAppState = AppState()
+    testAppState.isLoggedIn = true
+    testAppState.username = "test"
+    
+    return HomePreviewWrapper().environmentObject(testAppState)
 }
 
 struct HomePreviewWrapper: View {
