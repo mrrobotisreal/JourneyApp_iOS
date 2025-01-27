@@ -137,34 +137,7 @@ struct EntryListItemView: View {
                         ScrollView(.horizontal) {
                             HStack {
                                     ForEach(presignedURLs, id: \.self) { url in
-                                        AsyncImage(url: url) {phase in
-                                            switch phase {
-                                            case .empty:
-                                                ProgressView()
-                                                    .progressViewStyle(
-                                                        CircularProgressViewStyle(tint: .white)
-                                                    )
-                                                    .tint(.white)
-                                                    .padding()
-                                            case .success(let image):
-                                                image
-                                                    .resizable()
-                                                    .scaledToFill()
-                                                    .frame(width: 108, height: 108)
-                                                    .clipped()
-                                                    .cornerRadius(8)
-                                                    .shadow(color: Color.black.opacity(0.8), radius: 3, x: 0, y: 2)
-                                            case .failure(let error):
-                                                Color.gray
-                                                    .frame(width: 108, height: 108)
-                                                    .overlay(Text("Error").foregroundColor(.white))
-                                                    .onAppear {
-                                                        print("AsyncImage error for \(url): \(error.localizedDescription)")
-                                                    }
-                                            @unknown default:
-                                                EmptyView()
-                                            }
-                                        }
+                                        ResilientAsyncImage(url: url)
                                     }
                             }
                             .padding(.vertical, 7)

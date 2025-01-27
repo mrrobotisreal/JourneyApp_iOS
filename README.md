@@ -38,13 +38,9 @@
 
 ## Demo
 
-**SplashView and CreateAccount/LoginView Demo**
+**Quick Walkthrough Demo**
 
-![SplashView and CreateAccount/LoginView Demo](https://winapps-solutions-llc.s3.us-west-2.amazonaws.com/journey-app/MyJourney_SplashAndLoginDemo.mov.gif)
-
-**HomeView and NewEntryView Demo**
-
-![HomeView and NewEntryView Demo](https://winapps-solutions-llc.s3.us-west-2.amazonaws.com/journey-app/MyJourney_HomeViewAndNewEntryViewDemo.mov.gif)
+![Quick Walkthrough Demo](https://winapps-solutions-llc.s3.us-west-2.amazonaws.com/journey-app/MyJourney_FastDemo.gif)
 
 <!-- ![MyJourneyApp Demo Gif](https://winapps-solutions-llc.s3.us-west-2.amazonaws.com/products/journey-app/MyJourneyApp_Demo.gif) -->
 
