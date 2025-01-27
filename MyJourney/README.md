@@ -40,7 +40,7 @@
 
 **Quick Walkthrough Demo**
 
-![Quick Walkthrough Demo](https://winapps-solutions-llc.s3.us-west-2.amazonaws.com/journey-app/MyJourney_FastDemo.gif)
+![Quick Walkthrough Demo](https://winapps-solutions-llc.s3.us-west-2.amazonaws.com/journey-app/MyJourney_FastDemo_Optimized.gif)
 
 <!-- ![MyJourneyApp Demo Gif](https://winapps-solutions-llc.s3.us-west-2.amazonaws.com/products/journey-app/MyJourneyApp_Demo.gif) -->
 
