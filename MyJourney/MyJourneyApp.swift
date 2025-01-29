@@ -38,4 +38,6 @@ class AppState: ObservableObject {
     @Published var username: String? = nil
     @Published var isLoggedIn: Bool = false
     @Published var didFinishSplash: Bool = false
+    @Published var selectedEntryId: String? = nil
+    @Published var selectedEntry: EntryListItem? = nil
 }

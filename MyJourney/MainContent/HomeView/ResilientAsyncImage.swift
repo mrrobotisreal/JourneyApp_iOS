@@ -15,6 +15,7 @@ import SwiftUI
 /// images are anticipated to frequently be on and off screen.
 struct ResilientAsyncImage: View {
     let url: URL
+    let progressColor: Color
     
     /// This uniquely identifies the AsyncImage, and when it changes,
     /// the AsyncImage is re-initialized.
@@ -26,7 +27,7 @@ struct ResilientAsyncImage: View {
             case .empty:
                 ProgressView()
                     .progressViewStyle(
-                        CircularProgressViewStyle(tint: .white)
+                        CircularProgressViewStyle(tint: progressColor)
                     )
                     .tint(.white)
                     .padding()
@@ -63,7 +64,7 @@ struct ResilientAsyncImage: View {
         var body: some View {
             Group {
                 if let url = presignedURL {
-                    ResilientAsyncImage(url: url)
+                    ResilientAsyncImage(url: url, progressColor: .white)
                 } else {
                     Text("Loading presigned URL in preview...")
                 }

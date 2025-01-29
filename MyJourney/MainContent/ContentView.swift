@@ -12,6 +12,7 @@ struct ContentView: View {
 //    @Environment(\.modelContext) private var modelContext
 //    @Query private var items: [Item]
     @EnvironmentObject var appState: AppState
+    @ObservedObject var viewEntryViewModel = ViewEntryViewModel()
     @State private var userName: String = ""
     @State private var isNameEntered = false
     @State private var shouldNavigate = false
@@ -49,8 +50,8 @@ struct ContentView: View {
                             case "createNewEntry":
                                 NewEntryView()
                             case "viewEntry":
-//                                ViewEntry()
-                                HomeView(path: $path)
+                                ViewEntryView()
+//                                HomeView(path: $path)
                             case "settings":
 //                                SettingsView()
                                 HomeView(path: $path)

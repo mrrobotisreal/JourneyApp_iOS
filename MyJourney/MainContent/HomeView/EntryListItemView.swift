@@ -9,8 +9,12 @@ import SwiftUI
 
 struct EntryListItemView: View {
     let entryListItem: EntryListItem
+    let query: String
+//    let onTap: (EntryListItem) -> Void
+//    @Binding var path: NavigationPath
     
     @State private var presignedURLs: [URL] = []
+    @EnvironmentObject private var appState: AppState
     
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -41,31 +45,7 @@ struct EntryListItemView: View {
                         HStack {
                             Spacer()
                             
-                            AsyncImage(url: presignedURLs[0]) { phase in
-                                switch phase {
-                                case .empty:
-                                    ProgressView()
-                                        .progressViewStyle(
-                                            CircularProgressViewStyle(tint: .white)
-                                        )
-                                        .tint(.white)
-                                        .padding()
-                                case .success(let image):
-                                    image
-                                        .resizable()
-                                        .scaledToFill()
-                                        .frame(width: 108, height: 108)
-                                        .clipped()
-                                        .cornerRadius(8)
-                                        .shadow(color: Color.black.opacity(0.8), radius: 3, x: 0, y: 2)
-                                case .failure(_):
-                                    Color.gray
-                                        .frame(width: 108, height: 108)
-                                        .overlay(Text("Error").foregroundColor(.white))
-                                @unknown default:
-                                    EmptyView()
-                                }
-                            }
+                            ResilientAsyncImage(url: presignedURLs[0], progressColor: .white)
                             
                             Spacer()
                         }
@@ -75,59 +55,11 @@ struct EntryListItemView: View {
                         HStack {
                             Spacer()
                             
-                            AsyncImage(url: presignedURLs[0]) { phase in
-                                switch phase {
-                                case .empty:
-                                    ProgressView()
-                                        .progressViewStyle(
-                                            CircularProgressViewStyle(tint: .white)
-                                        )
-                                        .tint(.white)
-                                        .padding()
-                                case .success(let image):
-                                    image
-                                        .resizable()
-                                        .scaledToFill()
-                                        .frame(width: 108, height: 108)
-                                        .clipped()
-                                        .cornerRadius(8)
-                                        .shadow(color: Color.black.opacity(0.8), radius: 3, x: 0, y: 2)
-                                case .failure(_):
-                                    Color.gray
-                                        .frame(width: 108, height: 108)
-                                        .overlay(Text("Error").foregroundColor(.white))
-                                @unknown default:
-                                    EmptyView()
-                                }
-                            }
+                            ResilientAsyncImage(url: presignedURLs[0], progressColor: .white)
                             
                             Spacer()
                             
-                            AsyncImage(url: presignedURLs[1]) { phase in
-                                switch phase {
-                                case .empty:
-                                    ProgressView()
-                                        .progressViewStyle(
-                                            CircularProgressViewStyle(tint: .white)
-                                        )
-                                        .tint(.white)
-                                        .padding()
-                                case .success(let image):
-                                    image
-                                        .resizable()
-                                        .scaledToFill()
-                                        .frame(width: 108, height: 108)
-                                        .clipped()
-                                        .cornerRadius(8)
-                                        .shadow(color: Color.black.opacity(0.8), radius: 3, x: 0, y: 2)
-                                case .failure(_):
-                                    Color.gray
-                                        .frame(width: 108, height: 108)
-                                        .overlay(Text("Error").foregroundColor(.white))
-                                @unknown default:
-                                    EmptyView()
-                                }
-                            }
+                            ResilientAsyncImage(url: presignedURLs[1], progressColor: .white)
                             
                             Spacer()
                         }
@@ -137,7 +69,7 @@ struct EntryListItemView: View {
                         ScrollView(.horizontal) {
                             HStack {
                                     ForEach(presignedURLs, id: \.self) { url in
-                                        ResilientAsyncImage(url: url)
+                                        ResilientAsyncImage(url: url, progressColor: .white)
                                     }
                             }
                             .padding(.vertical, 7)
@@ -147,18 +79,68 @@ struct EntryListItemView: View {
                 }
             }
             
-            let attributed = parseAdvancedMarkdown(entryListItem.text)
-            HStack {
-                Spacer()
-                
-                Text(attributed)
-                    .font(.custom("Nexa Script Light", size: 14))
-                    .foregroundColor(.white)
-                    .lineLimit(3)
-                    .truncationMode(.tail)
-                
-                Spacer()
+            let matches = findSubstrings(in: entryListItem.text, query: query)
+            if matches.isEmpty {
+                let attributed = parseAdvancedMarkdown(entryListItem.text)
+                HStack {
+                    Spacer()
+                    
+                    Text(attributed)
+                        .font(.custom("Nexa Script Light", size: 14))
+                        .foregroundColor(.white)
+                        .lineLimit(3)
+                        .truncationMode(.tail)
+                    
+                    Spacer()
+                }
+            } else {
+                let highlighted = highlightSubstringMatches(text: entryListItem.text, matches: matches)
+                HStack {
+                    Spacer()
+                    
+                    Text(highlighted)
+                        .padding()
+                        .cornerRadius(12)
+                        .background(.white)
+                        .clipShape(RoundedRectangle(cornerRadius: 12))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 12)
+                                .stroke(Color(red: 0.008, green: 0.157, blue: 0.251), lineWidth: 2)
+                        )
+//                        .onTapGesture {
+//                            onTap(entryListItem)
+//                        }
+                    
+                    Spacer()
+                }
             }
+            
+//            HStack {
+//                Spacer()
+//                
+//                Button(action: {
+//                    print("What the fuck is the problem!!!!!")
+//                    appState.selectedEntryId = entryListItem.id
+//                    appState.selectedEntry = entryListItem
+//                    path.append("viewEntry")
+//                }) {
+//                    Image(systemName: "eye")
+//                    Text("View")
+//                        .font(.custom("Nexa Script Heavy", size: 16))
+//                }
+//                .padding(.horizontal, 12)
+//                .padding(.vertical, 6)
+//                .foregroundColor(.white)
+//                .cornerRadius(12)
+//                .background(Color(red: 0.008, green: 0.282, blue: 0.451))
+//                .clipShape(RoundedRectangle(cornerRadius: 12))
+//                .overlay(
+//                    RoundedRectangle(cornerRadius: 12)
+//                        .stroke(Color(red: 0.008, green: 0.157, blue: 0.251), lineWidth: 2)
+//                )
+//                
+//                Spacer()
+//            }
         }
 //        .frame(maxWidth: 360)
         .padding()
@@ -219,5 +201,17 @@ extension EntryListItem {
 }
 
 #Preview {
-    EntryListItemView(entryListItem: .mock)
+    let testAppState = AppState()
+    testAppState.isLoggedIn = true
+    testAppState.username = "test"
+    
+    return EntryListViewPreviewWrapper().environmentObject(testAppState)
+}
+
+struct EntryListViewPreviewWrapper: View {
+    @State private var path = NavigationPath()
+    
+    var body: some View {
+        EntryListItemView(entryListItem: .mock, query: "wrap")
+    }
 }

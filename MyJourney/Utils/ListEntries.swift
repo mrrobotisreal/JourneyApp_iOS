@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct EntryListItem: Identifiable, Decodable, Equatable {
+struct EntryListItem: Identifiable, Decodable, Equatable, Hashable {
     let id: String
     let text: String
     let imageURLs: [String]
