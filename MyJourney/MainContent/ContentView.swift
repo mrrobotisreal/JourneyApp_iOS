@@ -12,9 +12,6 @@ struct ContentView: View {
 //    @Environment(\.modelContext) private var modelContext
 //    @Query private var items: [Item]
     @EnvironmentObject var appState: AppState
-    @ObservedObject var viewEntryViewModel = ViewEntryViewModel()
-    @State private var userName: String = ""
-    @State private var isNameEntered = false
     @State private var shouldNavigate = false
     
     @State private var path = NavigationPath()
@@ -51,12 +48,9 @@ struct ContentView: View {
                                 NewEntryView()
                             case "viewEntry":
                                 ViewEntryView()
-//                                HomeView(path: $path)
+                                //                                HomeView(path: $path)
                             case "settings":
-//                                SettingsView()
-                                HomeView(path: $path)
-                            case "advancedSearch":
-//                                SearchView()
+                                //                                SettingsView()
                                 HomeView(path: $path)
                             default:
                                 HomeView(path: $path)

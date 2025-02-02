@@ -298,6 +298,7 @@ extension CreateAccountView {
     }
 }
 
+@MainActor
 class UsernameViewModel: ObservableObject {
     @Published var username: String = ""
     @Published var isUsernameAvailable: Bool? = nil
@@ -309,7 +310,7 @@ class UsernameViewModel: ObservableObject {
     
     init() {
         $username
-            .debounce(for: .seconds(1.5), scheduler: RunLoop.main)
+            .debounce(for: .seconds(1), scheduler: RunLoop.main)
             .removeDuplicates()
             .sink { [weak self] newUsername in guard let self = self, !newUsername.isEmpty else { return }
                 Task {
@@ -375,6 +376,7 @@ class UsernameViewModel: ObservableObject {
     }
 }
 
+@MainActor
 class PasswordViewModel: ObservableObject {
     @Published var password: String = ""
     @Published var isPasswordValid: Bool? = nil

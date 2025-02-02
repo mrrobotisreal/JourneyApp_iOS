@@ -17,11 +17,16 @@ struct HomeView: View {
     @State private var showActionSheet = false
     @State private var searchQuery: String = ""
     @State private var filterOptions = FilterOptions()
+    @State private var page: Int = 1
+    @State private var limit: Int = 20
+    @State private var searchTask: Task<Void, Never>? = nil
+    @State private var selectedRoute: String? = nil
+    @State private var newEntryActive: Bool = false
     
     @State private var showFilters = false
     
     var body: some View {
-        NavigationStack(path: $path) {
+        NavigationView {
             ZStack {
                 Color(red: 0.533, green: 0.875, blue: 0.949)
                     .ignoresSafeArea()
@@ -32,6 +37,9 @@ struct HomeView: View {
                             .font(.custom("Nexa Script Light", size: 16))
                             .textFieldStyle(RoundedBorderTextFieldStyle())
                             .disableAutocorrection(true)
+                            .onChange(of: searchQuery) {
+                                debounceSearch()
+                            }
                         
                         Button(action: {
                             showFilters = true
@@ -83,21 +91,28 @@ struct HomeView: View {
                                 .stroke(Color(red: 0.008, green: 0.157, blue: 0.251), lineWidth: 2)
                         )
                     } else {
-                        //                    NavigationStack(path: $path) {
                         List {
                             ForEach(filteredEntries, id: \.id) { entry in
-                                VStack {
-                                    EntryListItemView(entryListItem: entry, query: searchQuery)
-                                        .onAppear {
-                                            if entry == filteredEntries.last {
-                                                viewModel.fetchEntries(username: appState.username ?? "")
+                                NavigationLink(
+                                    tag: "viewEntry",
+                                    selection: $selectedRoute,
+                                    destination: {
+                                        ViewEntryView()
+                                    },
+                                    label: {
+                                        EntryListItemView(entryListItem: entry, query: searchQuery)
+                                            .onAppear {
+                                                if entry == filteredEntries.last {
+                                                    viewModel.fetchEntries(username: appState.username ?? "")
+                                                }
                                             }
-                                        }
-                                        .onTapGesture(perform: {
-                                            updateSelectedEntry(entry: entry)
-                                            path.append("viewEntry")
-                                        })
-                                }
+                                            .onTapGesture {
+                                                updateSelectedEntry(entry: entry)
+                                                selectedRoute = "viewEntry"
+                                            }
+                                    }
+                                )
+                                .buttonStyle(PlainButtonStyle())
                                 .listRowBackground(Color.clear)
                                 .listRowInsets(EdgeInsets())
                                 .padding()
@@ -119,10 +134,6 @@ struct HomeView: View {
                             RoundedRectangle(cornerRadius: 0)
                                 .stroke(Color(red: 0.008, green: 0.157, blue: 0.251), lineWidth: 2)
                         )
-                        //                        .navigationDestination(for: EntryListItem.self) { entry in
-                        //                            ViewEntryView()
-                        //                        }
-                        //                    }
                     }
                     
                     Button(action: {
@@ -147,51 +158,65 @@ struct HomeView: View {
                         Text("Main Menu")
                             .font(.custom("Nexa Script Heavy", size: 18))
                         
-                        Button(action: {
-                            path.append("createNewEntry")
-                        }) {
-                            Image(systemName: "lightbulb.max.fill")
-                                .foregroundColor(.white)
-                            Spacer()
-                            Text("Create A New Entry")
-                                .font(.custom("Nexa Script Heavy", size: 18))
-                                .foregroundColor(.white)
-                            Spacer()
-                        }
-                        .frame(minWidth: 300, maxWidth: 300)
-                        .padding(.horizontal, 12)
-                        .padding(.vertical, 6)
-                        .foregroundColor(.white)
-                        .cornerRadius(12)
-                        .background(Color(red: 0.039, green: 0.549, blue: 0.749))
-                        .clipShape(RoundedRectangle(cornerRadius: 12))
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 12)
-                                .stroke(Color(red: 0.008, green: 0.157, blue: 0.251), lineWidth: 2)
+                        NavigationLink(
+                            tag: "createNewEntry",
+                            selection: $selectedRoute,
+                            destination: {
+                                NewEntryView()
+                            },
+                            label: {
+                                HStack {
+                                    Image(systemName: "lightbulb.max.fill")
+                                        .foregroundColor(.white)
+                                    Spacer()
+                                    Text("Create A New Entry")
+                                        .font(.custom("Nexa Script Heavy", size: 18))
+                                        .foregroundColor(.white)
+                                    Spacer()
+                                }
+                                .frame(minWidth: 300, maxWidth: 300)
+                                .padding(.horizontal, 12)
+                                .padding(.vertical, 6)
+                                .background(Color(red: 0.039, green: 0.549, blue: 0.749))
+                                .cornerRadius(12)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 12)
+                                        .stroke(Color(red: 0.008, green: 0.157, blue: 0.251), lineWidth: 2)
+                                )
+                            }
+                        )
+                        .buttonStyle(PlainButtonStyle()) // This keeps your custom styling intact.
+                        .simultaneousGesture(
+                            TapGesture().onEnded {
+                                selectedRoute = "createNewEntry"
+//                                showActionSheet = false
+                            }
                         )
                         
-                        Button(action: {
-                            // action here...
-                        }) {
-                            Image(systemName: "doc.text.magnifyingglass")
-                                .foregroundColor(.white)
-                            Spacer()
-                            Text("Search Entries (Advanced)")
-                                .font(.custom("Nexa Script Heavy", size: 18))
-                                .foregroundColor(.white)
-                            Spacer()
-                        }
-                        .frame(minWidth: 300, maxWidth: 300)
-                        .padding(.horizontal, 12)
-                        .padding(.vertical, 6)
-                        .foregroundColor(.white)
-                        .cornerRadius(12)
-                        .background(Color(red: 0.039, green: 0.549, blue: 0.749))
-                        .clipShape(RoundedRectangle(cornerRadius: 12))
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 12)
-                                .stroke(Color(red: 0.008, green: 0.157, blue: 0.251), lineWidth: 2)
-                        )
+//                        Button(action: {
+//                            showActionSheet = false
+//                            newEntryActive = true
+//                            print("Is new entry active? \(newEntryActive)")
+//                        }) {
+//                            Image(systemName: "lightbulb.max.fill")
+//                                .foregroundColor(.white)
+//                            Spacer()
+//                            Text("Create A New Entry")
+//                                .font(.custom("Nexa Script Heavy", size: 18))
+//                                .foregroundColor(.white)
+//                            Spacer()
+//                        }
+//                        .frame(minWidth: 300, maxWidth: 300)
+//                        .padding(.horizontal, 12)
+//                        .padding(.vertical, 6)
+//                        .foregroundColor(.white)
+//                        .cornerRadius(12)
+//                        .background(Color(red: 0.039, green: 0.549, blue: 0.749))
+//                        .clipShape(RoundedRectangle(cornerRadius: 12))
+//                        .overlay(
+//                            RoundedRectangle(cornerRadius: 12)
+//                                .stroke(Color(red: 0.008, green: 0.157, blue: 0.251), lineWidth: 2)
+//                        )
                         
                         Button(action: {
                             // action here...
@@ -277,44 +302,142 @@ struct HomeView: View {
                     )
                     .shadow(radius: 5)
                     .frame(height: 300)
-                    .offset(y: UIScreen.main.bounds.height - 600)
+                    .offset(y: UIScreen.main.bounds.height - 580)
                 }
             }
             .onAppear {
                 viewModel.fetchEntries(username: appState.username ?? "")
-            }
-            .onChange(of: searchQuery) {
-                // TODO: server search logic will be added here...
+                viewModel.fetchUniqueLocationsAndTags(user: appState.username ?? "")
             }
             .overlay(
                 Group {
                     if showFilters {
                         FilterModalView(
-                            isVisible: $showFilters, filterOptions: $filterOptions, allLocations: [], allTags: []
+                            isVisible: $showFilters, filterOptions: $filterOptions, allLocations: viewModel.allUniqueLocations, allTags: viewModel.allUniqueTags, onApply: {
+                                doSearch()
+                            }
                         )
                     }
                 }
             )
-            .navigationDestination(for: EntryListItem.self) { entry in
-                ViewEntryView()
+        }
+    }
+    
+    private func doSearch() {
+        print("Performing doSearch with query=\(searchQuery)")
+        viewModel.searchEntries(user: appState.username ?? "",
+                                page: page,
+                                limit: limit,
+                                filterOptions: filterOptions,
+                                searchQuery: searchQuery)
+    }
+    
+    private func debounceSearch() {
+        searchTask?.cancel()
+        
+        searchTask = Task {
+            try? await Task.sleep(nanoseconds: 1_000_000_000)
+            if !Task.isCancelled {
+                doSearch()
             }
         }
     }
     
     var filteredEntries: [EntryListItem] {
-        guard !searchQuery.isEmpty else {
-            return viewModel.entries
+        var results: [EntryListItem] = viewModel.entries
+        
+        if !filterOptions.selectedLocations.isEmpty {
+            results = results.filter { entry in
+                let entryLocSet = Set(entry.locations)
+                let overlap = entryLocSet.intersection(filterOptions.selectedLocations)
+                return !overlap.isEmpty
+            }
         }
         
-        return viewModel.entries.filter { entry in
-            !findSubstrings(in: entry.text, query: searchQuery).isEmpty
+        if !filterOptions.selectedTags.isEmpty {
+            results = results.filter { entry in
+                let entryTagSet = Set(entry.tags)
+                let overlap = entryTagSet.intersection(filterOptions.selectedTags)
+                return !overlap.isEmpty
+            }
         }
+        
+        switch filterOptions.timeframe {
+        case .all:
+            break
+        case .past30Days:
+            let cutoff = Calendar.current.date(byAdding: .day, value: -30, to: Date()) ?? .distantPast
+            results = results.filter { entry in
+                guard let entryDate = getTimestampDate(timestampStr: entry.timestamp) else {
+                    return false
+                }
+                return entryDate >= cutoff
+            }
+        case .past3Months:
+            let cutoff = Calendar.current.date(byAdding: .month, value: -3, to: Date()) ?? .distantPast
+            results = results.filter { entry in
+                guard let entryDate = getTimestampDate(timestampStr: entry.timestamp) else {
+                    return false
+                }
+                return entryDate >= cutoff
+            }
+        case .past6Months:
+            let cutoff = Calendar.current.date(byAdding: .month, value: -6, to: Date()) ?? .distantPast
+            results = results.filter { entry in
+                guard let entryDate = getTimestampDate(timestampStr: entry.timestamp) else {
+                    return false
+                }
+                return entryDate >= cutoff
+            }
+        case .pastYear:
+            let cutoff = Calendar.current.date(byAdding: .year, value: -1, to: Date()) ?? .distantPast
+            results = results.filter { entry in
+                guard let entryDate = getTimestampDate(timestampStr: entry.timestamp) else {
+                    return false
+                }
+                return entryDate >= cutoff
+            }
+        case .customRange:
+            if let from = filterOptions.fromDate {
+                results = results.filter { entry in
+                    guard let entryDate = getTimestampDate(timestampStr: entry.timestamp) else {
+                        return false
+                    }
+                    return entryDate >= from
+                }
+            }
+            if let to = filterOptions.toDate {
+                results = results.filter { entry in
+                    guard let entryDate = getTimestampDate(timestampStr: entry.timestamp) else {
+                        return false
+                    }
+                    return entryDate >= to
+                }
+            }
+        }
+        
+        if !searchQuery.isEmpty {
+            results = results.filter { entry in
+                !findSubstrings(in: entry.text, query: searchQuery).isEmpty
+            }
+        }
+        
+        switch filterOptions.sortRule {
+        case .newest:
+            results.sort { $0.timestamp > $1.timestamp }
+        case .oldest:
+            results.sort { $0.timestamp < $1.timestamp }
+        }
+        
+        return results
     }
 }
 
 extension HomeView {
     private func updateSelectedEntry(entry: EntryListItem) {
         appState.selectedEntry = entry
+        print("Entry updated...")
+//        path.append(Route.viewEntry)
     }
 }
 

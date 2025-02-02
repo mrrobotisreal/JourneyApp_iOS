@@ -115,34 +115,28 @@ struct EntryListItemView: View {
                 }
             }
             
-//            HStack {
-//                Spacer()
-//                
-//                Button(action: {
-//                    print("What the fuck is the problem!!!!!")
-//                    appState.selectedEntryId = entryListItem.id
-//                    appState.selectedEntry = entryListItem
-//                    path.append("viewEntry")
-//                }) {
-//                    Image(systemName: "eye")
-//                    Text("View")
-//                        .font(.custom("Nexa Script Heavy", size: 16))
-//                }
-//                .padding(.horizontal, 12)
-//                .padding(.vertical, 6)
-//                .foregroundColor(.white)
-//                .cornerRadius(12)
-//                .background(Color(red: 0.008, green: 0.282, blue: 0.451))
-//                .clipShape(RoundedRectangle(cornerRadius: 12))
-//                .overlay(
-//                    RoundedRectangle(cornerRadius: 12)
-//                        .stroke(Color(red: 0.008, green: 0.157, blue: 0.251), lineWidth: 2)
-//                )
-//                
-//                Spacer()
-//            }
+            HStack {
+                if entryListItem.locations.count >= 1 {
+                    Image(systemName: "location")
+                        .foregroundColor(.white)
+                        .font(.title2)
+                    Text(entryListItem.locations[0].displayName ?? "Unknown")
+                        .font(.custom("Nexa Script Heavy", size: 16))
+                        .foregroundColor(.white)
+                }
+                
+                Spacer()
+                
+                if entryListItem.tags.count >= 1 {
+                    Image(systemName: "tag")
+                        .foregroundColor(.white)
+                        .font(.title2)
+                    Text(entryListItem.tags[0].key)
+                        .font(.custom("Nexa Script Heavy", size: 16))
+                        .foregroundColor(.white)
+                }
+            }
         }
-//        .frame(maxWidth: 360)
         .padding()
         .cornerRadius(12)
         .background(Color(red: 0.039, green: 0.549, blue: 0.749))
@@ -196,7 +190,9 @@ extension EntryListItem {
             "images/test/07238b12-7eb5-42ca-888f-3d69c87a6258/image1.jpg",
             "images/test/07238b12-7eb5-42ca-888f-3d69c87a6258/image2.jpg"
         ],
-        timestamp: "2025-01-26T06:19:51Z"
+        timestamp: "2025-01-26T06:19:51Z",
+        locations: [LocationData(latitude: 47.61945051921359, longitude: -122.33775910597386, displayName: "Seattle")],
+        tags: [TagData(key: "home", value: nil)]
     )
 }
 

@@ -8,13 +8,13 @@
 import Foundation
 import UIKit
 
-struct LocationData: Codable {
+struct LocationData: Codable, Hashable {
     let latitude: Double
     let longitude: Double
     let displayName: String?
 }
 
-struct TagData: Codable {
+struct TagData: Codable, Hashable {
     let key: String
     let value: String?
 }

@@ -12,13 +12,17 @@ struct EntryListItem: Identifiable, Decodable, Equatable, Hashable {
     let text: String
     let imageURLs: [String]
     let timestamp: String
+    let locations: [LocationData]
+    let tags: [TagData]
     // add locations and tags later...
     
-    init(id: String, text: String, imageURLs: [String], timestamp: String) {
+    init(id: String, text: String, imageURLs: [String], timestamp: String, locations: [LocationData], tags: [TagData]) {
         self.id = id
         self.text = text
         self.imageURLs = imageURLs
         self.timestamp = timestamp
+        self.locations = locations
+        self.tags = tags
     }
     
     enum CodingKeys: String, CodingKey {
@@ -26,6 +30,8 @@ struct EntryListItem: Identifiable, Decodable, Equatable, Hashable {
         case text
         case images
         case timestamp
+        case locations
+        case tags
         // add locations and tags later...
     }
     
@@ -37,6 +43,8 @@ struct EntryListItem: Identifiable, Decodable, Equatable, Hashable {
         self.text = try container.decode(String.self, forKey: .text)
         self.imageURLs = try container.decodeIfPresent([String].self, forKey: .images) ?? []
         self.timestamp = try container.decode(String.self, forKey: .timestamp)
+        self.locations = try container.decode([LocationData].self, forKey: .locations)
+        self.tags = try container.decode([TagData].self, forKey: .tags)
     }
 }
 
@@ -58,7 +66,6 @@ func getPresignedURLForKey(_ key: String) async throws -> URL {
     }
     
     if let dict = try? JSONSerialization.jsonObject(with: data) as? [String: Any], let urlString = dict["url"] as? String, let presignedURL = URL(string: urlString) {
-        print("Returning presignedURL successfully!!!")
         return presignedURL
     }
     

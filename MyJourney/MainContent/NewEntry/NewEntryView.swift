@@ -7,6 +7,8 @@
 
 import SwiftUI
 import UIKit
+import CoreLocation
+import MapKit
 
 struct NewEntryView: View {
     @EnvironmentObject var appState: AppState
@@ -15,6 +17,7 @@ struct NewEntryView: View {
     @State private var isSubmitting: Bool = false
     @State private var isSavedSuccessfully: Bool = false
     @State private var showLocationSheet: Bool = false
+    @State private var showLocationPicker: Bool = false
     @State private var showPeopleSheet: Bool = false
     @State private var showCameraSheet: Bool = false
     @State private var showTagsSheet: Bool = false
@@ -38,6 +41,8 @@ struct NewEntryView: View {
 //    
 //    Here is -strikethrough- and {color: red}red text{color} and nesting like *bold ~underlined nested~ inside*.
 //    """
+    @State private var editingLocationIndex: Int?
+    @State private var isEnteringCustomName = false
     
     let date = getDateString()
     let timestamp = getTimestampString()
@@ -57,7 +62,7 @@ struct NewEntryView: View {
             VStack(spacing: 0) {
                 HStack {
                     Button(action: {
-                        // action here...
+                        dismiss()
                     }) {
                         Text("Cancel")
                             .font(.custom("Nexa Script Light", size: 18))
@@ -149,6 +154,46 @@ struct NewEntryView: View {
                     }
                     .pickerStyle(.segmented)
                     .padding()
+                    
+                    HStack {
+                        if locations.count > 0 {
+                            VStack {
+                                HStack {
+                                    Image(systemName: "location")
+                                        .foregroundColor(Color(red: 0.008, green: 0.157, blue: 0.251))
+                                        .font(.title2)
+                                    Text("Locations:")
+                                        .font(.custom("Nexa Script Light", size: 14))
+                                        .foregroundColor(Color(red: 0.008, green: 0.157, blue: 0.251))
+                                }
+                                
+                                Text(locations[0].displayName ?? "Unknown")
+                            }
+                        }
+                        
+                        Spacer()
+                        
+                        if tags.count > 0 {
+                            VStack {
+                                HStack {
+                                    Image(systemName: "tag")
+                                        .foregroundColor(Color(red: 0.008, green: 0.157, blue: 0.251))
+                                        .font(.title2)
+                                    Text("Tags:")
+                                        .font(.custom("Nexa Script Light", size: 14))
+                                        .foregroundColor(Color(red: 0.008, green: 0.157, blue: 0.251))
+                                }
+                                
+                                HStack {
+                                    Text(tags[0].key)
+                                    
+                                    if let value = tags[0].value {
+                                        Text("(\(value))")
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
                 .frame(maxWidth: 360)
                 .frame(maxHeight: 600)
@@ -168,26 +213,13 @@ struct NewEntryView: View {
                     Spacer()
                     
                     Button(action: {
-                        // action here...
+                        showLocationPicker = true
                     }) {
                         Image(systemName: "location.circle.fill")
                             .font(.title)
                             .foregroundColor(.white)
                     }
                     .padding()
-                    
-                    
-                    Spacer()
-                    
-                    Button(action: {
-                        // action here...
-                    }) {
-                        Image(systemName: "person.circle.fill")
-                            .font(.title)
-                            .foregroundColor(.white)
-                    }
-                    .padding()
-                    
                     
                     Spacer()
                     
@@ -204,7 +236,7 @@ struct NewEntryView: View {
                     Spacer()
                     
                     Button(action: {
-                        // action here...
+                        showTagsSheet = true
                     }) {
                         Image(systemName: "tag.circle.fill")
                             .font(.title)
@@ -343,51 +375,69 @@ struct NewEntryView: View {
                     Text("Info Menu & Instructions")
                         .font(.custom("Nexa Script Heavy", size: 18))
                     
-                    Button(action: {
-                        // action here...
-                    }) {
-                        Image(systemName: "camera.fill")
-                            .foregroundColor(.white)
-                        Spacer()
-                        Text("Take A Photo")
-                            .font(.custom("Nexa Script Heavy", size: 18))
-                            .foregroundColor(.white)
-                        Spacer()
+                    HStack {
+                        Text("Bold:")
+                            .font(.custom("Nexa Script Heavy", size: 16))
+                        
+                        Text("Wrap with *")
+                            .font(.custom("Nexa Script Light", size: 16))
                     }
-                    .frame(minWidth: 300, maxWidth: 300)
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 6)
-                    .foregroundColor(.white)
-                    .cornerRadius(12)
-                    .background(Color(red: 0.039, green: 0.549, blue: 0.749))
-                    .clipShape(RoundedRectangle(cornerRadius: 12))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 12)
-                            .stroke(Color(red: 0.008, green: 0.157, blue: 0.251), lineWidth: 2)
-                    )
-                    
-                    Button(action: {
-                        // action here...
-                    }) {
-                        Image(systemName: "photo.fill.on.rectangle.fill")
-                            .foregroundColor(.white)
-                        Spacer()
-                        Text("Choose Photos")
-                            .font(.custom("Nexa Script Heavy", size: 18))
-                            .foregroundColor(.white)
-                        Spacer()
+                    HStack {
+                        Text("Italic:")
+                            .font(.custom("Nexa Script Heavy", size: 16))
+                        
+                        Text("Wrap with _")
+                            .font(.custom("Nexa Script Light", size: 16))
                     }
-                    .frame(minWidth: 300, maxWidth: 300)
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 6)
-                    .foregroundColor(.white)
-                    .cornerRadius(12)
-                    .background(Color(red: 0.039, green: 0.549, blue: 0.749))
-                    .clipShape(RoundedRectangle(cornerRadius: 12))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 12)
-                            .stroke(Color(red: 0.008, green: 0.157, blue: 0.251), lineWidth: 2)
-                    )
+                    HStack {
+                        Text("Underline:")
+                            .font(.custom("Nexa Script Heavy", size: 16))
+                        
+                        Text("Wrap with ~")
+                            .font(.custom("Nexa Script Light", size: 16))
+                    }
+                    HStack {
+                        Text("Strikethrough:")
+                            .font(.custom("Nexa Script Heavy", size: 16))
+                        
+                        Text("Wrap with -")
+                            .font(.custom("Nexa Script Light", size: 16))
+                    }
+                    HStack {
+                        Text("Inline Code:")
+                            .font(.custom("Nexa Script Heavy", size: 16))
+                        
+                        Text("Wrap with `")
+                            .font(.custom("Nexa Script Light", size: 16))
+                    }
+                    HStack {
+                        Text("Colored text:")
+                            .font(.custom("Nexa Script Heavy", size: 16))
+                        
+                        Text("Wrap with {color: purple}Your text{color}")
+                            .font(.custom("Nexa Script Light", size: 16))
+                    }
+                    HStack {
+                        Text("Title:")
+                            .font(.custom("Nexa Script Heavy", size: 16))
+                        
+                        Text("Start line with #")
+                            .font(.custom("Nexa Script Light", size: 16))
+                    }
+                    HStack {
+                        Text("Subtitle:")
+                            .font(.custom("Nexa Script Heavy", size: 16))
+                        
+                        Text("Start line with ##")
+                            .font(.custom("Nexa Script Light", size: 16))
+                    }
+                    HStack {
+                        Text("Bulleted list item:")
+                            .font(.custom("Nexa Script Heavy", size: 16))
+                        
+                        Text("Start line with -")
+                            .font(.custom("Nexa Script Light", size: 16))
+                    }
                     
                     Button(action: {
                         showInfoSheet = false
@@ -426,14 +476,20 @@ struct NewEntryView: View {
                 )
                 .shadow(radius: 5)
                 .frame(height: 300)
-                .offset(y: UIScreen.main.bounds.height - 560)
+                .offset(y: UIScreen.main.bounds.height - 600)
             }
         }
+        .navigationBarBackButtonHidden(true)
         .sheet(isPresented: $showImagePicker) {
             ImagePicker(sourceType: pickerSource) { uiImage in
                 if images.count < 3 {
                     images.append(uiImage)
                 }
+            }
+        }
+        .sheet(isPresented: $showLocationPicker) {
+            LocationPickerView { newLocation in
+                locations.append(newLocation)
             }
         }
         .alert("Saved successfully!", isPresented: $isSavedSuccessfully) {
@@ -443,6 +499,20 @@ struct NewEntryView: View {
                 homeViewModel.fetchEntries(username: appState.username ?? "")
             }
         }
+        .overlay(
+            Group {
+                if showTagsSheet {
+                    AddTagView(isAddTagViewVisible: $showTagsSheet, onTagAdded: { newTag in
+                        tags.append(newTag)
+                    })
+                }
+            }
+        )
+//        .sheet(isPresented: $showTagsSheet) {
+//            AddTagView { newTag in
+//                tags.append(newTag)
+//            }
+//        }
     }
 }
 
@@ -473,60 +543,6 @@ extension NewEntryView {
                 isSavedSuccessfully = false
             }
             isSubmitting = false
-        }
-    }
-    
-    /// A simple markdown parser that handles:
-    /// *bold*  -> bold text
-    /// _italic_ -> italic text
-    /// `code`  -> monospaced code snippet (violet fg, dark bg)
-    ///
-    /// It removes the delimiter characters (*, _, `) from the final display.
-    private func parseSimpleMarkdown(_ text: String) -> AttributedString {
-        let mutable = NSMutableAttributedString(string: text)
-        
-        let fullRange = NSRange(location: 0, length: mutable.length)
-        mutable.addAttributes([.font: UIFont.systemFont(ofSize: 16)], range: fullRange)
-        
-        applyPattern("\\*(.+?)\\*", to: mutable, attributes: [
-            .font: UIFont.boldSystemFont(ofSize: 16)
-        ])
-        
-        applyPattern("\\_(.+?)\\_", to: mutable, attributes: [
-            .font: UIFont.italicSystemFont(ofSize: 16)
-        ])
-        
-        let codeAttributes: [NSAttributedString.Key: Any] = [
-            .font: UIFont(name: "Menlo", size: 16) ?? UIFont.monospacedSystemFont(ofSize: 16, weight: .regular),
-            .foregroundColor: UIColor.green,
-            .backgroundColor: UIColor(white: 0.1, alpha: 1.0)
-        ]
-        applyPattern("\\`(.+?)\\`", to: mutable, attributes: codeAttributes)
-        
-        return AttributedString(mutable)
-    }
-    
-    /// Finds all occurrences of `pattern` in `mutable`, applies `attributes` to the text inside
-    /// the delimiters, and then removes the delimiter characters.
-    private func applyPattern(_ pattern: String, to mutable: NSMutableAttributedString, attributes: [NSAttributedString.Key : Any]) {
-        guard let regex = try? NSRegularExpression(pattern: pattern) else {
-            return
-        }
-        
-        // Get all matches
-        let results = regex.matches(in: mutable.string, range: NSRange(location: 0, length: mutable.length))
-        
-        for match in results.reversed() {
-            let matchRange = match.range
-            guard matchRange.length >= 3 else { continue }
-            
-            let innerRange = NSRange(location: matchRange.location + 1, length: matchRange.length - 2)
-            
-            mutable.addAttributes(attributes, range: innerRange)
-            
-            mutable.replaceCharacters(in: NSRange(location: matchRange.location + matchRange.length - 1, length: 1), with: "")
-            
-            mutable.replaceCharacters(in: NSRange(location: matchRange.location, length: 1), with: "")
         }
     }
 }
