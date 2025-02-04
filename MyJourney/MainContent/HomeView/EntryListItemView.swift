@@ -10,29 +10,28 @@ import SwiftUI
 struct EntryListItemView: View {
     let entryListItem: EntryListItem
     let query: String
-//    let onTap: (EntryListItem) -> Void
-//    @Binding var path: NavigationPath
     
     @State private var presignedURLs: [URL] = []
+    @State private var isLoading: Bool = false
     @EnvironmentObject private var appState: AppState
     
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack {
                 Text(getWeekdayStr(fromISO: entryListItem.timestamp))
-                    .font(.custom("Nexa Script Heavy", size: 20))
+                    .font(.custom("Nexa Script Heavy", size: 16))
                     .foregroundColor(.white)
                 
                 Spacer()
                 
                 Text(getFullDateStr(fromISO: entryListItem.timestamp))
-                    .font(.custom("Nexa Script Heavy", size: 26))
+                    .font(.custom("Nexa Script Heavy", size: 20))
                     .foregroundColor(.white)
                 
                 Spacer()
                 
-                Image(systemName: "square.and.arrow.up")
-                    .font(.title2)
+                Text(getTimeStr(fromISO: entryListItem.timestamp))
+                    .font(.custom("Nexa Script Heavy", size: 16))
                     .foregroundColor(.white)
             }
             
@@ -107,33 +106,84 @@ struct EntryListItemView: View {
                             RoundedRectangle(cornerRadius: 12)
                                 .stroke(Color(red: 0.008, green: 0.157, blue: 0.251), lineWidth: 2)
                         )
-//                        .onTapGesture {
-//                            onTap(entryListItem)
-//                        }
                     
                     Spacer()
                 }
             }
             
             HStack {
-                if entryListItem.locations.count >= 1 {
-                    Image(systemName: "location")
-                        .foregroundColor(.white)
-                        .font(.title2)
-                    Text(entryListItem.locations[0].displayName ?? "Unknown")
-                        .font(.custom("Nexa Script Heavy", size: 16))
-                        .foregroundColor(.white)
+                let locs = entryListItem.locations.prefix(3).map { IdentifiableLocationData(
+                    latitude: $0.latitude,
+                    longitude: $0.longitude,
+                    displayName: $0.displayName
+                ) }
+                VStack(alignment: .leading) {
+                    if !locs.isEmpty {
+                        HStack {
+                            Image(systemName: "location")
+                                .foregroundColor(.white)
+                                .font(.title2)
+                            Text("Locations:")
+                                .font(.custom("Nexa Script Heavy", size: 16))
+                                .foregroundColor(.white)
+                        }
+                    }
+                    
+                    ForEach(locs) { loc in
+                        Text("• \(loc.displayName ?? "Unknown location")")
+                            .padding(.horizontal)
+                            .font(.custom("Nexa Script Light", size: 16))
+                            .foregroundColor(.white)
+                    }
+                    
+                    if !entryListItem.locations.isEmpty && entryListItem.locations.count > 3 {
+                        Text("+\(entryListItem.locations.count - 3) more...")
+                            .padding(.horizontal)
+                            .font(.custom("Nexa Script Light", size: 16))
+                            .foregroundColor(.white)
+                    }
                 }
                 
                 Spacer()
                 
-                if entryListItem.tags.count >= 1 {
-                    Image(systemName: "tag")
-                        .foregroundColor(.white)
-                        .font(.title2)
-                    Text(entryListItem.tags[0].key)
-                        .font(.custom("Nexa Script Heavy", size: 16))
-                        .foregroundColor(.white)
+                
+                let tags = entryListItem.tags.prefix(3).map { IdentifiableTagData(
+                    key: $0.key,
+                    value: $0.value
+                ) }
+                VStack(alignment: .leading) {
+                    if !tags.isEmpty {
+                        HStack {
+                            Image(systemName: "tag")
+                                .foregroundColor(.white)
+                                .font(.title2)
+                            Text("Tags:")
+                                .font(.custom("Nexa Script Heavy", size: 16))
+                                .foregroundColor(.white)
+                        }
+                    }
+                    
+                    ForEach(tags) { tag in
+                        HStack {
+                            Text("• \(tag.key)")
+                                .font(.custom("Nexa Script Light", size: 16))
+                                .foregroundColor(.white)
+                                
+                            if let value = tag.value {
+                                Text("(\(value))")
+                                    .font(.custom("Nexa Script Light", size: 16))
+                                    .foregroundColor(.white)
+                            }
+                        }
+                        .padding(.horizontal)
+                    }
+                    
+                    if !entryListItem.tags.isEmpty && entryListItem.tags.count > 3 {
+                        Text("+\(entryListItem.tags.count - 3) more...")
+                            .padding(.horizontal)
+                            .font(.custom("Nexa Script Light", size: 16))
+                            .foregroundColor(.white)
+                    }
                 }
             }
         }
@@ -147,11 +197,16 @@ struct EntryListItemView: View {
         )
         .shadow(color: Color.black.opacity(0.9), radius: 7, x: 0, y: 5)
         .onAppear {
-            if entryListItem.imageURLs.count > 0 {
-                if presignedURLs.isEmpty {
-                    Task {
-                        await fetchPresignedURLs()
+            if !entryListItem.imageURLs.isEmpty && presignedURLs.isEmpty {
+                isLoading = true
+                
+                Task {
+                    do {
+                         await fetchPresignedURLs()
+                    } catch {
+                        print("Error in onAppear task: \(error)")
                     }
+                    isLoading = false
                 }
             }
         }
@@ -159,16 +214,19 @@ struct EntryListItemView: View {
     
     private func fetchPresignedURLs() async {
         var tempURLs: [URL] = []
-        for key in entryListItem.imageURLs {
+        
+        for (_, key) in entryListItem.imageURLs.enumerated() {
             do {
-                let presignedURL = try await getPresignedURLForKey(key)
+                let presignedURL = try await NetworkService.shared.getPresignedURLForKey(key)
                 tempURLs.append(presignedURL)
             } catch {
-                print("Presign GET error for \(key): \(error)")
+                print("Error getting presigned URL for \(key): \(error)")
             }
         }
         
-        presignedURLs = tempURLs
+        await MainActor.run {
+            self.presignedURLs = tempURLs
+        }
     }
 }
 
@@ -186,13 +244,13 @@ extension EntryListItem {
     Here is -strikethrough- and {color: red}red text{color} and nesting like *bold ~underlined nested~ inside*.
     """,
         imageURLs: [
-            "images/test/07238b12-7eb5-42ca-888f-3d69c87a6258/image0.jpg",
-            "images/test/07238b12-7eb5-42ca-888f-3d69c87a6258/image1.jpg",
+//            "images/test/07238b12-7eb5-42ca-888f-3d69c87a6258/image0.jpg",
+//            "images/test/07238b12-7eb5-42ca-888f-3d69c87a6258/image1.jpg",
             "images/test/07238b12-7eb5-42ca-888f-3d69c87a6258/image2.jpg"
         ],
         timestamp: "2025-01-26T06:19:51Z",
-        locations: [LocationData(latitude: 47.61945051921359, longitude: -122.33775910597386, displayName: "Seattle")],
-        tags: [TagData(key: "home", value: nil)]
+        locations: [LocationData(latitude: 47.61945051921359, longitude: -122.33775910597386, displayName: "Seattle"), LocationData(latitude: 47.61945051921359, longitude: -122.33775910597386, displayName: "Vancouver"), LocationData(latitude: 47.61945051921359, longitude: -122.33775910597386, displayName: "Delta"), LocationData(latitude: 47.61945051921359, longitude: -122.33775910597386, displayName: "Kyiv"), LocationData(latitude: 47.61945051921359, longitude: -122.33775910597386, displayName: "Vienna")],
+        tags: [TagData(key: "Home", value: "Seattle"), TagData(key: "Home", value: "Vancouver"), TagData(key: "Home", value: "Delta"), TagData(key: "Vacation", value: "Kyiv")]
     )
 }
 

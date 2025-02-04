@@ -22,6 +22,7 @@ struct HomeView: View {
     @State private var searchTask: Task<Void, Never>? = nil
     @State private var selectedRoute: String? = nil
     @State private var newEntryActive: Bool = false
+//    @State private var isRefreshing: Bool = false
     
     @State private var showFilters = false
     
@@ -126,6 +127,10 @@ struct HomeView: View {
                                 }
                             }
                         }
+                        .refreshable(action: {
+                            print("Fetching entries again")
+                            doSearch()
+                        })
                         .listStyle(.plain)
                         .scrollContentBackground(.hidden)
                         .background(Color(red: 0.533, green: 0.875, blue: 0.949))
@@ -134,6 +139,12 @@ struct HomeView: View {
                             RoundedRectangle(cornerRadius: 0)
                                 .stroke(Color(red: 0.008, green: 0.157, blue: 0.251), lineWidth: 2)
                         )
+                        .onReceive(NotificationCenter.default.publisher(for: .newEntryCreated)) {_ in
+                            print("Received notification, refreshing entries")
+                            Task {
+                                doSearch()
+                            }
+                        }
                     }
                     
                     Button(action: {
@@ -324,7 +335,6 @@ struct HomeView: View {
     }
     
     private func doSearch() {
-        print("Performing doSearch with query=\(searchQuery)")
         viewModel.searchEntries(user: appState.username ?? "",
                                 page: page,
                                 limit: limit,

@@ -496,7 +496,8 @@ struct NewEntryView: View {
             Button("OK", role: .cancel) {
                 isSavedSuccessfully = false
                 dismiss()
-                homeViewModel.fetchEntries(username: appState.username ?? "")
+                NotificationCenter.default.post(name: .newEntryCreated, object: nil)
+//                await homeViewModel.fetchEntries(username: appState.username ?? "")
             }
         }
         .overlay(
@@ -523,7 +524,7 @@ extension NewEntryView {
         
         Task {
             do {
-                let uuid = try await createNewEntryOnServer(
+                let uuid = try await NetworkService.shared.createNewEntry(
                     username: username,
                     text: entryText,
                     locations: locations.isEmpty ? nil : locations,
@@ -531,13 +532,13 @@ extension NewEntryView {
                 )
                 print("Got uuid: \(uuid) from server")
                 
-                let isUploadedAndUpdated = try await uploadImages(
+                let isUploadedAndUpdated = try await NetworkService.shared.uploadImages(
                     username: username,
                     uuid: uuid,
                     images: images
                 )
                 print("All images uploaded!")
-                isSavedSuccessfully = isUploadedAndUpdated
+                isSavedSuccessfully = isUploadedAndUpdated.success
             } catch {
                 print("Error: \(error)")
                 isSavedSuccessfully = false

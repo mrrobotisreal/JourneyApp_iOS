@@ -30,14 +30,24 @@ struct MapView: UIViewRepresentable {
         return mapView
     }
     
+    func centerMapOnPoint(_ coordinate: CLLocationCoordinate2D, mapView: MKMapView) {
+        let span = mapView.region.span
+        let newRegion = MKCoordinateRegion(
+            center: coordinate,
+            span: span
+        )
+        mapView.setRegion(newRegion, animated: true)
+    }
+    
     func updateUIView(_ uiView: MKMapView, context: Context) {
-        uiView.setRegion(region, animated: true)
+//        uiView.setRegion(region, animated: true)
         
         uiView.removeAnnotations(uiView.annotations)
         if let coordinate = selectedCoordinate {
             let annotation = MKPointAnnotation()
             annotation.coordinate = coordinate
             uiView.addAnnotation(annotation)
+            centerMapOnPoint(coordinate, mapView: uiView)
         }
     }
     

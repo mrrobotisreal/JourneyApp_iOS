@@ -10,6 +10,9 @@ import MapKit
 
 struct LocationPickerView: View {
     @Environment(\.dismiss) var dismiss
+    @StateObject private var locationManager = LocationManager()
+    @State private var searchText = ""
+    @State private var searchResults: [MKMapItem] = []
     @State private var region = MKCoordinateRegion(
         center: CLLocationCoordinate2D(latitude: 37.7749, longitude: -122.4194), // Default (e.g., SF)
         span: MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05)
@@ -17,12 +20,43 @@ struct LocationPickerView: View {
     @State private var selectedCoordinate: CLLocationCoordinate2D?
     @State private var displayName: String = ""
     @State private var isGeocoding: Bool = false
+    @State private var showingSearchResults: Bool = false
 
     var onLocationSelected: (LocationData) -> Void
     
     var body: some View {
         NavigationView {
             VStack {
+                SearchBar(text: $searchText, onSearchButtonClicked: performSearch)
+                    .padding()
+                
+                if showingSearchResults && !searchResults.isEmpty {
+                    List(searchResults, id: \.self) { item in
+                        Button(action: {
+                            selectSearchResult(item)
+                        }) {
+                            VStack(alignment: .leading) {
+                                Text(item.name ?? "Unknown location")
+                                    .font(.custom("Nexa Script Light", size: 16))
+                                
+                                let locality = item.placemark.locality ?? ""
+                                let adminArea = item.placemark.administrativeArea ?? ""
+                                let country = item.placemark.country ?? ""
+                                let address = [locality, adminArea, country]
+                                    .filter { !$0.isEmpty }
+                                    .joined(separator: ", ")
+                                
+                                if !address.isEmpty {
+                                    Text(address)
+                                        .font(.custom("Nexa Script Light", size: 14))
+                                        .foregroundColor(.gray)
+                                }
+                            }
+                        }
+                    }
+                    .transition(.opacity)
+                }
+                
                 MapView(selectedCoordinate: $selectedCoordinate, region: $region).edgesIgnoringSafeArea(.all)
                     .onChange(of: selectedCoordinate) { oldCoordinate, newCoordinate in
                         guard let coordinate = newCoordinate else {
@@ -99,19 +133,86 @@ struct LocationPickerView: View {
                     .disabled(selectedCoordinate == nil)
                 }
             }
+            .onAppear {
+                locationManager.requestLocation()
+            }
+            .onChange(of: locationManager.location) { oldLocation, newLocation in
+                if let location = newLocation {
+                    region = MKCoordinateRegion(
+                        center: location.coordinate,
+                        span: MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05)
+                    )
+                }
+            }
         }
     }
     
-    // This is a duplicate until I can figure out how to properly fetchDisplayName for display here
-    private func fetchDisplayName(for location: CLLocationCoordinate2D, completion: @escaping (String?) -> Void) {
-        let geocoder = CLGeocoder()
-        let clLocation = CLLocation(latitude: location.latitude, longitude: location.longitude)
+    private func performSearch() {
+        let searchRequest = MKLocalSearch.Request()
+        searchRequest.naturalLanguageQuery = searchText
+        searchRequest.region = region
+        
+        let search = MKLocalSearch(request: searchRequest)
+        search.start { response, error in
+            guard let response = response else {
+                print("Search error: \(error?.localizedDescription ?? "Unknown error")")
+                return
+            }
+            
+            searchResults = response.mapItems
+            withAnimation {
+                showingSearchResults = true
+            }
+        }
+    }
+    
+    private func selectSearchResult(_ item: MKMapItem) {
+        selectedCoordinate = item.placemark.coordinate
+        
+        var locationComponents: [String] = []
+        
+        if let name = item.name {
+            locationComponents.append(name)
+        }
+        
+        var addressComponents: [String] = []
+        if let locality = item.placemark.locality {
+            addressComponents.append(locality)
+        }
+        if let adminArea = item.placemark.administrativeArea {
+            addressComponents.append(adminArea)
+        }
+        if let country = item.placemark.country {
+            addressComponents.append(country)
+        }
+        
+        displayName = locationComponents.first ?? "Unknown location"
+        region.center = item.placemark.coordinate
+        withAnimation {
+            showingSearchResults = false
+        }
+        searchText = ""
+    }
+}
 
-        geocoder.reverseGeocodeLocation(clLocation) { placemarks, error in
-            if let placemark = placemarks?.first {
-                completion(placemark.name ?? placemark.locality)
-            } else {
-                completion(nil)
+struct SearchBar: View {
+    @Binding var text: String
+    var onSearchButtonClicked: () -> Void
+    
+    var body: some View {
+        HStack {
+            TextField("Search location...", text: $text)
+                .textFieldStyle(RoundedBorderTextFieldStyle())
+                .font(.custom("Nexa Script Light", size: 16))
+                .onSubmit {
+                    onSearchButtonClicked()
+                }
+            
+            if !text.isEmpty {
+                Button(action: {}) {
+                    Image(systemName: "xmark.circle.fill")
+                        .foregroundColor(.gray)
+                }
             }
         }
     }
@@ -119,13 +220,5 @@ struct LocationPickerView: View {
 
 #Preview {
     LocationPickerView(onLocationSelected: { coordinate in
-//        fetchDisplayName(for: coordinate) { name in
-//            let newLocation = LocationData(
-//                latitude: coordinate.latitude,
-//                longitude: coordinate.longitude,
-//                displayName: name
-//            )
-//            locations.append(newLocation)
-//        }
     })
 }

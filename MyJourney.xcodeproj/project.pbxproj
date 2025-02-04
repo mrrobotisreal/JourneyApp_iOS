@@ -349,6 +349,7 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = MyJourney/Info.plist;
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "This app simply gets your location only when you wish to use the map to select a location to add to your journal entry.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -378,6 +379,7 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = MyJourney/Info.plist;
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "This app simply gets your location only when you wish to use the map to select a location to add to your journal entry.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;

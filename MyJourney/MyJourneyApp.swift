@@ -39,5 +39,5 @@ class AppState: ObservableObject {
     @Published var isLoggedIn: Bool = false
     @Published var didFinishSplash: Bool = false
     @Published var selectedEntryId: String? = nil
-    @Published var selectedEntry: EntryListItem? = nil
+    @Published var selectedEntry: EntryListItem = .mock
 }

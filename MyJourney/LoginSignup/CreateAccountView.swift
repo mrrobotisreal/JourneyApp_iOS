@@ -230,29 +230,32 @@ extension CreateAccountView {
     }
     
     private func createAccount(username: String, password: String) async throws -> Bool {
-        guard let url = URL(string: "https://journeyapp.me/api/users/create") else {
-            throw URLError(.badURL)
-        }
+//        guard let url = URL(string: "https://journeyapp.me/api/users/create") else {
+//            throw URLError(.badURL)
+//        }
+//        
+//        let requestData = [
+//            "username": username,
+//            "password": password
+//        ]
+//        let jsonData = try JSONSerialization.data(withJSONObject: requestData)
+//        
+//        var request = URLRequest(url: url)
+//        request.httpMethod = "POST"
+//        request.httpBody = jsonData
+//        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+//        
+//        let (data, response) = try await URLSession.shared.data(for: request)
+//        
+//        guard let httpResponse = response as? HTTPURLResponse, 200..<300 ~= httpResponse.statusCode else {
+//            throw URLError(.badServerResponse)
+//        }
+//        
+//        let jsonObject = try JSONSerialization.jsonObject(with: data) as? [String: Any]
+//        let success = jsonObject?["success"] as? Bool ?? false
         
-        let requestData = [
-            "username": username,
-            "password": password
-        ]
-        let jsonData = try JSONSerialization.data(withJSONObject: requestData)
-        
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-        request.httpBody = jsonData
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        
-        let (data, response) = try await URLSession.shared.data(for: request)
-        
-        guard let httpResponse = response as? HTTPURLResponse, 200..<300 ~= httpResponse.statusCode else {
-            throw URLError(.badServerResponse)
-        }
-        
-        let jsonObject = try JSONSerialization.jsonObject(with: data) as? [String: Any]
-        let success = jsonObject?["success"] as? Bool ?? false
+        let response = try await NetworkService.shared.createAccount(username: username, password: password, sessionOption: "always") // TODO: handle sessionOption
+        let success = response.success
         
         if success {
             appState.username = username
@@ -264,29 +267,31 @@ extension CreateAccountView {
     
     private func handleLogin(username: String, password: String) async throws -> Bool {
         print("Attempting to login")
-        guard let url = URL(string: "https://journeyapp.me/api/users/login") else {
-            throw URLError(.badURL)
-        }
-        
-        let requestData = [
-            "username": username,
-            "password": password,
-        ]
-        let jsonData = try JSONSerialization.data(withJSONObject: requestData)
-        
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-        request.httpBody = jsonData
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        
-        let (data, response) = try await URLSession.shared.data(for: request)
-        
-        guard let httpResponse = response as? HTTPURLResponse, 200..<300 ~= httpResponse.statusCode else {
-            throw URLError(.badServerResponse)
-        }
-        
-        let jsonObject = try JSONSerialization.jsonObject(with: data) as? [String: Any]
-        let success = jsonObject?["success"] as? Bool ?? false
+//        guard let url = URL(string: "https://journeyapp.me/api/users/login") else {
+//            throw URLError(.badURL)
+//        }
+//        
+//        let requestData = [
+//            "username": username,
+//            "password": password,
+//        ]
+//        let jsonData = try JSONSerialization.data(withJSONObject: requestData)
+//        
+//        var request = URLRequest(url: url)
+//        request.httpMethod = "POST"
+//        request.httpBody = jsonData
+//        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+//        
+//        let (data, response) = try await URLSession.shared.data(for: request)
+//        
+//        guard let httpResponse = response as? HTTPURLResponse, 200..<300 ~= httpResponse.statusCode else {
+//            throw URLError(.badServerResponse)
+//        }
+//        
+//        let jsonObject = try JSONSerialization.jsonObject(with: data) as? [String: Any]
+//        let success = jsonObject?["success"] as? Bool ?? false
+        let response = try await NetworkService.shared.login(username: username, password: password, sessionOption: "always") // TODO: handle sessionOption
+        let success = response.success
         
         if success {
             print("Successfully logged in!")
@@ -314,6 +319,7 @@ class UsernameViewModel: ObservableObject {
             .removeDuplicates()
             .sink { [weak self] newUsername in guard let self = self, !newUsername.isEmpty else { return }
                 Task {
+//                    NetworkService.shared.tempInit()
                     self.isUsernameValid = self.checkIsUsernameValid(newUsername)
                     if !self.isLoginVisible {
                         await self.checkUsernameAvailability(newUsername)
