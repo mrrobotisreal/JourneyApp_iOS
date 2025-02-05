@@ -349,7 +349,9 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = MyJourney/Info.plist;
-				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "This app simply gets your location only when you wish to use the map to select a location to add to your journal entry.";
+				INFOPLIST_KEY_NSCameraUsageDescription = "JourneyApp.me requires access to your camera if you wish to take photos and attach them to your journal entries. It is only accessed while app is in use.";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "JourneyApp.me requires access to your location if you wish to attach locations to your journal entries. It only access location while app is in use and using the Maps feature.";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "JourneyApp.me requires access to your Photos Library if you wish to select existing photos to attach to your journal entries. It is only accessed while the app is in use and the photo picker is open.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -379,7 +381,9 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = MyJourney/Info.plist;
-				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "This app simply gets your location only when you wish to use the map to select a location to add to your journal entry.";
+				INFOPLIST_KEY_NSCameraUsageDescription = "JourneyApp.me requires access to your camera if you wish to take photos and attach them to your journal entries. It is only accessed while app is in use.";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "JourneyApp.me requires access to your location if you wish to attach locations to your journal entries. It only access location while app is in use and using the Maps feature.";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "JourneyApp.me requires access to your Photos Library if you wish to select existing photos to attach to your journal entries. It is only accessed while the app is in use and the photo picker is open.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
