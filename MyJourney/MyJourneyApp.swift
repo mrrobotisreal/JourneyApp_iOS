@@ -38,6 +38,8 @@ class AppState: ObservableObject {
     @Published var username: String? = nil
     @Published var isLoggedIn: Bool = false
     @Published var didFinishSplash: Bool = false
-    @Published var selectedEntryId: String? = nil
+    @Published var selectedEntryId: String = ""
     @Published var selectedEntry: EntryListItem = .mock
+    @Published var idLocations: [IdentifiableLocationData] = []
+    @Published var idTags: [IdentifiableTagData] = []
 }

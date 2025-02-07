@@ -82,8 +82,8 @@ struct LocationData: Codable, Hashable {
     let displayName: String?
 }
 
-struct IdentifiableLocationData: Identifiable {
-    let id = UUID()
+struct IdentifiableLocationData: Identifiable, Hashable {
+    var id = UUID()
     let latitude: Double
     let longitude: Double
     let displayName: String?
@@ -94,8 +94,8 @@ struct TagData: Codable, Hashable {
     let value: String?
 }
 
-struct IdentifiableTagData: Identifiable {
-    let id = UUID()
+struct IdentifiableTagData: Identifiable, Hashable {
+    var id = UUID()
     let key: String
     let value: String?
 }

@@ -61,6 +61,7 @@ struct ContentView: View {
         }
         .animation(.easeInOut, value: shouldNavigate)
         .onAppear {
+//            NetworkService.shared.tempInit()
             DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) {
                 appState.didFinishSplash = true
             }

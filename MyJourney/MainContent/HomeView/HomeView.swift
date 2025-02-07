@@ -27,7 +27,7 @@ struct HomeView: View {
     @State private var showFilters = false
     
     var body: some View {
-        NavigationView {
+//        AdaptiveNavigationView {
             ZStack {
                 Color(red: 0.533, green: 0.875, blue: 0.949)
                     .ignoresSafeArea()
@@ -94,29 +94,40 @@ struct HomeView: View {
                     } else {
                         List {
                             ForEach(filteredEntries, id: \.id) { entry in
-                                NavigationLink(
-                                    tag: "viewEntry",
-                                    selection: $selectedRoute,
-                                    destination: {
-                                        ViewEntryView()
-                                    },
-                                    label: {
-                                        EntryListItemView(entryListItem: entry, query: searchQuery)
-                                            .onAppear {
-                                                if entry == filteredEntries.last {
-                                                    viewModel.fetchEntries(username: appState.username ?? "")
-                                                }
-                                            }
-                                            .onTapGesture {
-                                                updateSelectedEntry(entry: entry)
-                                                selectedRoute = "viewEntry"
-                                            }
+                                EntryListItemView(entryListItem: entry, query: searchQuery)
+                                    .onAppear {
+                                        if entry == filteredEntries.last {
+                                            viewModel.fetchEntries(username: appState.username ?? "")
+                                            // TODO: implement pagination...
+                                        }
                                     }
-                                )
-                                .buttonStyle(PlainButtonStyle())
-                                .listRowBackground(Color.clear)
-                                .listRowInsets(EdgeInsets())
-                                .padding()
+                                    .onTapGesture {
+                                        updateSelectedEntry(entry: entry)
+                                        selectedRoute = "viewEntry"
+                                    }
+//                                NavigationLink(
+//                                    tag: "viewEntry",
+//                                    selection: $selectedRoute,
+//                                    destination: {
+//                                        ViewEntryView()
+//                                    },
+//                                    label: {
+//                                        EntryListItemView(entryListItem: entry, query: searchQuery)
+//                                            .onAppear {
+//                                                if entry == filteredEntries.last {
+//                                                    viewModel.fetchEntries(username: appState.username ?? "")
+//                                                }
+//                                            }
+//                                            .onTapGesture {
+//                                                updateSelectedEntry(entry: entry)
+//                                                selectedRoute = "viewEntry"
+//                                            }
+//                                    }
+//                                )
+//                                .buttonStyle(PlainButtonStyle())
+//                                .listRowBackground(Color.clear)
+//                                .listRowInsets(EdgeInsets())
+//                                .padding()
                             }
                             
                             if viewModel.isLoading {
@@ -147,14 +158,55 @@ struct HomeView: View {
                         }
                     }
                     
-                    Button(action: {
-                        showActionSheet = true
-                    }) {
-                        Image(systemName: "line.3.horizontal.decrease.circle.fill")
-                            .font(.title)
+//                    Button(action: {
+//                        showActionSheet = true
+//                    }) {
+//                        Image(systemName: "line.3.horizontal.decrease.circle.fill")
+//                            .font(.title)
+//                    }
+//                    .foregroundColor(.white)
+//                    .padding()
+                    
+                    HStack {
+                        Spacer()
+                        
+                        Button(action: {
+//                            showActionSheet = true
+//                            TODO: create settings view
+                        }) {
+                            Image(systemName: "gear")
+                                .imageScale(.large)
+                                .font(.system(size: 26))
+                        }
+                        .foregroundColor(.white)
+                        .padding()
+                        
+                        Spacer()
+                        
+                        Button(action: {
+                            path.append("createNewEntry")
+                        }) {
+                            Image(systemName: "plus.circle.fill")
+                                .imageScale(.large)
+                                .font(.system(size: 40))
+                        }
+                        .foregroundColor(.white)
+                        .padding()
+                        
+                        Spacer()
+                        
+                        Button(action: {
+                            handleLogout()
+                        }) {
+                            Image(systemName: "rectangle.portrait.and.arrow.right.fill")
+                                .imageScale(.large)
+                                .font(.system(size: 26))
+                        }
+                        .foregroundColor(.white)
+                        .padding()
+                        
+                        Spacer()
                     }
-                    .foregroundColor(.white)
-                    .padding()
                 }
                 .background(Color(red: 0.008, green: 0.282, blue: 0.451))
                 
@@ -169,40 +221,39 @@ struct HomeView: View {
                         Text("Main Menu")
                             .font(.custom("Nexa Script Heavy", size: 18))
                         
-                        NavigationLink(
-                            tag: "createNewEntry",
-                            selection: $selectedRoute,
-                            destination: {
-                                NewEntryView()
-                            },
-                            label: {
-                                HStack {
-                                    Image(systemName: "lightbulb.max.fill")
-                                        .foregroundColor(.white)
-                                    Spacer()
-                                    Text("Create A New Entry")
-                                        .font(.custom("Nexa Script Heavy", size: 18))
-                                        .foregroundColor(.white)
-                                    Spacer()
-                                }
-                                .frame(minWidth: 300, maxWidth: 300)
-                                .padding(.horizontal, 12)
-                                .padding(.vertical, 6)
-                                .background(Color(red: 0.039, green: 0.549, blue: 0.749))
-                                .cornerRadius(12)
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 12)
-                                        .stroke(Color(red: 0.008, green: 0.157, blue: 0.251), lineWidth: 2)
-                                )
-                            }
-                        )
-                        .buttonStyle(PlainButtonStyle()) // This keeps your custom styling intact.
-                        .simultaneousGesture(
-                            TapGesture().onEnded {
-                                selectedRoute = "createNewEntry"
-//                                showActionSheet = false
-                            }
-                        )
+//                        NavigationLink(
+//                            tag: "createNewEntry",
+//                            selection: $selectedRoute,
+//                            destination: {
+//                                NewEntryView()
+//                            },
+//                            label: {
+//                                HStack {
+//                                    Image(systemName: "lightbulb.max.fill")
+//                                        .foregroundColor(.white)
+//                                    Spacer()
+//                                    Text("Create A New Entry")
+//                                        .font(.custom("Nexa Script Heavy", size: 18))
+//                                        .foregroundColor(.white)
+//                                    Spacer()
+//                                }
+//                                .frame(minWidth: 300, maxWidth: 300)
+//                                .padding(.horizontal, 12)
+//                                .padding(.vertical, 6)
+//                                .background(Color(red: 0.039, green: 0.549, blue: 0.749))
+//                                .cornerRadius(12)
+//                                .overlay(
+//                                    RoundedRectangle(cornerRadius: 12)
+//                                        .stroke(Color(red: 0.008, green: 0.157, blue: 0.251), lineWidth: 2)
+//                                )
+//                            }
+//                        )
+//                        .buttonStyle(PlainButtonStyle()) // This keeps your custom styling intact.
+//                        .simultaneousGesture(
+//                            TapGesture().onEnded {
+//                                selectedRoute = "createNewEntry"
+//                            }
+//                        )
                         
 //                        Button(action: {
 //                            showActionSheet = false
@@ -331,7 +382,7 @@ struct HomeView: View {
                     }
                 }
             )
-        }
+//        }
     }
     
     private func doSearch() {
@@ -445,9 +496,30 @@ struct HomeView: View {
 
 extension HomeView {
     private func updateSelectedEntry(entry: EntryListItem) {
-        appState.selectedEntry = entry
-        print("Entry updated...")
-//        path.append(Route.viewEntry)
+        do {
+            appState.selectedEntry = entry
+            appState.idLocations = entry.locations.map { IdentifiableLocationData(
+                id: UUID(),
+                latitude: $0.latitude,
+                longitude: $0.longitude,
+                displayName: $0.displayName
+            ) }
+            appState.idTags = entry.tags.map { IdentifiableTagData(
+                id: UUID(),
+                key: $0.key,
+                value: $0.value
+            ) }
+            print("Entry updated...")
+            path.append("viewEntry")
+        }
+    }
+    
+    private func handleLogout() {
+        do {
+            AuthenticationManager.shared.logout()
+            appState.isLoggedIn = false
+            appState.username = ""
+        }
     }
 }
 

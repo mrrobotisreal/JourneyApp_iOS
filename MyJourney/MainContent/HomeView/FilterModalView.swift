@@ -25,131 +25,162 @@ struct FilterModalView: View {
                     isVisible = false
                 }
             
-            // The pop-up box in the center
-            VStack(spacing: 16) {
-                Text("Filter & Sort")
-                    .padding(.top, 12)
-                    .font(.custom("Nexa Script Heavy", size: 24))
-                    .foregroundColor(Color(red: 0.008, green: 0.157, blue: 0.251))
-                
-                // Multi-select for Locations
-                VStack(alignment: .leading, spacing: 8) {
-                    Text("Locations (multi-select):")
-                        .font(.custom("Nexa Script Heavy", size: 16))
+            VStack {
+                VStack(spacing: 16) {
+                    Text("Filter & Sort")
+                        .padding(.top, 12)
+                        .font(.custom("Nexa Script Heavy", size: 24))
                         .foregroundColor(Color(red: 0.008, green: 0.157, blue: 0.251))
                     
-                    ScrollView(.horizontal, showsIndicators: false) {
-                        HStack {
-                            ForEach(allLocations, id: \.self) { loc in
-                                // a toggle-like button
-                                SelectableChip(
-                                    title: loc.displayName ?? "Unknown",
-                                    isSelected: filterOptions.selectedLocations.contains(loc)
-                                ) {
-                                    // toggle
-                                    if filterOptions.selectedLocations.contains(loc) {
-                                        filterOptions.selectedLocations.remove(loc)
-                                    } else {
-                                        filterOptions.selectedLocations.insert(loc)
+                    // Multi-select for Locations
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text("Locations (multi-select):")
+                            .font(.custom("Nexa Script Heavy", size: 16))
+                            .foregroundColor(Color(red: 0.008, green: 0.157, blue: 0.251))
+                        
+                        ScrollView(.horizontal, showsIndicators: false) {
+                            HStack {
+                                ForEach(allLocations, id: \.self) { loc in
+                                    // a toggle-like button
+                                    SelectableChip(
+                                        title: loc.displayName ?? "Unknown",
+                                        isSelected: filterOptions.selectedLocations.contains(loc)
+                                    ) {
+                                        // toggle
+                                        if filterOptions.selectedLocations.contains(loc) {
+                                            filterOptions.selectedLocations.remove(loc)
+                                        } else {
+                                            filterOptions.selectedLocations.insert(loc)
+                                        }
                                     }
                                 }
                             }
                         }
-                    }
-                }
-                .padding(.horizontal)
-
-                // Multi-select for Tags
-                VStack(alignment: .leading, spacing: 8) {
-                    Text("Tags (multi-select):")
-                        .font(.custom("Nexa Script Heavy", size: 16))
-                        .foregroundColor(Color(red: 0.008, green: 0.157, blue: 0.251))
-                    
-                    ScrollView(.horizontal, showsIndicators: false) {
-                        HStack {
-                            ForEach(allTags, id: \.self) { tag in
-                                SelectableChip(
-                                    title: tag.key,
-                                    isSelected: filterOptions.selectedTags.contains(tag)
-                                ) {
-                                    if filterOptions.selectedTags.contains(tag) {
-                                        filterOptions.selectedTags.remove(tag)
-                                    } else {
-                                        filterOptions.selectedTags.insert(tag)
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-                .padding(.horizontal)
-                
-                // Single-select Timeframe
-                VStack(alignment: .leading, spacing: 8) {
-                    Text("Timeframe:")
-                        .font(.custom("Nexa Script Heavy", size: 16))
-                        .foregroundColor(Color(red: 0.008, green: 0.157, blue: 0.251))
-                    
-                    Menu {
-                        Picker("Timeframe", selection: $filterOptions.timeframe) {
-                            ForEach(Timeframe.allCases) { frame in
-                                Text(frame.rawValue).tag(frame).font(.custom("Nexa Script Heavy", size: 16))
-                            }
-                        }
-                        .frame(maxWidth: .infinity)
-                    } label: {
-                        Button(action: {}) {
-                            Text($filterOptions.timeframe.id)
-                                .font(.custom("Nexa Script Light", size: 16))
-                                .frame(maxWidth: .infinity)
-                            
-                            Image(systemName: "arrow.down")
-                        }
-                        .padding(.horizontal, 12)
-                        .padding(.vertical, 6)
-                        .foregroundColor(.white)
-                        .cornerRadius(12)
-                        .background(Color(red: 0.039, green: 0.549, blue: 0.749))
-                        .clipShape(RoundedRectangle(cornerRadius: 12))
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 12)
-                                .stroke(Color(red: 0.008, green: 0.157, blue: 0.251), lineWidth: 2)
-                        )
-                    }
-                }
-                .padding(.horizontal)
-                .frame(maxWidth: .infinity)
-                
-                // If user selected .customRange, show the date pickers
-                if filterOptions.timeframe == .customRange {
-                    VStack {
-                        DatePicker("From:", selection: Binding($filterOptions.fromDate, defaultValue: Date()), displayedComponents: .date)
-                        DatePicker("To:", selection: Binding($filterOptions.toDate, defaultValue: Date()), displayedComponents: .date)
                     }
                     .padding(.horizontal)
-                }
-
-                // Single-select SortRule
-                VStack(alignment: .leading, spacing: 8) {
-                    Text("Sort Rule:")
-                        .font(.custom("Nexa Script Heavy", size: 16))
-                        .foregroundColor(Color(red: 0.008, green: 0.157, blue: 0.251))
                     
-                    Menu {
-                        Picker("Sort Rule", selection: $filterOptions.sortRule) {
-                            ForEach(SortRule.allCases) { rule in
-                                Text(rule.rawValue).tag(rule).font(.custom("Nexa Script Heavy", size: 16))
+                    // Multi-select for Tags
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text("Tags (multi-select):")
+                            .font(.custom("Nexa Script Heavy", size: 16))
+                            .foregroundColor(Color(red: 0.008, green: 0.157, blue: 0.251))
+                        
+                        ScrollView(.horizontal, showsIndicators: false) {
+                            HStack {
+                                ForEach(allTags, id: \.self) { tag in
+                                    SelectableChip(
+                                        title: tag.key,
+                                        isSelected: filterOptions.selectedTags.contains(tag)
+                                    ) {
+                                        if filterOptions.selectedTags.contains(tag) {
+                                            filterOptions.selectedTags.remove(tag)
+                                        } else {
+                                            filterOptions.selectedTags.insert(tag)
+                                        }
+                                    }
+                                }
                             }
                         }
-                        .frame(maxWidth: .infinity)
-                    } label: {
-                        Button(action: {}) {
-                            Text($filterOptions.sortRule.id)
-                                .font(.custom("Nexa Script Light", size: 16))
-                                .frame(maxWidth: .infinity)
-                            
-                            Image(systemName: "arrow.down")
+                    }
+                    .padding(.horizontal)
+                    
+                    // Single-select Timeframe
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text("Timeframe:")
+                            .font(.custom("Nexa Script Heavy", size: 16))
+                            .foregroundColor(Color(red: 0.008, green: 0.157, blue: 0.251))
+                        
+                        Menu {
+                            Picker("Timeframe", selection: $filterOptions.timeframe) {
+                                ForEach(Timeframe.allCases) { frame in
+                                    Text(frame.rawValue).tag(frame).font(.custom("Nexa Script Heavy", size: 16))
+                                }
+                            }
+                            .frame(maxWidth: .infinity)
+                        } label: {
+                            Button(action: {}) {
+                                Text($filterOptions.timeframe.id)
+                                    .font(.custom("Nexa Script Light", size: 16))
+                                    .frame(maxWidth: .infinity)
+                                
+                                Image(systemName: "arrow.down")
+                            }
+                            .padding(.horizontal, 12)
+                            .padding(.vertical, 6)
+                            .foregroundColor(.white)
+                            .cornerRadius(12)
+                            .background(Color(red: 0.039, green: 0.549, blue: 0.749))
+                            .clipShape(RoundedRectangle(cornerRadius: 12))
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 12)
+                                    .stroke(Color(red: 0.008, green: 0.157, blue: 0.251), lineWidth: 2)
+                            )
                         }
+                    }
+                    .padding(.horizontal)
+                    .frame(maxWidth: .infinity)
+                    
+                    // If user selected .customRange, show the date pickers
+                    if filterOptions.timeframe == .customRange {
+                        VStack {
+                            DatePicker("From:", selection: Binding($filterOptions.fromDate, defaultValue: Date()), displayedComponents: .date)
+                            DatePicker("To:", selection: Binding($filterOptions.toDate, defaultValue: Date()), displayedComponents: .date)
+                        }
+                        .padding(.horizontal)
+                    }
+                    
+                    // Single-select SortRule
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text("Sort Rule:")
+                            .font(.custom("Nexa Script Heavy", size: 16))
+                            .foregroundColor(Color(red: 0.008, green: 0.157, blue: 0.251))
+                        
+                        Menu {
+                            Picker("Sort Rule", selection: $filterOptions.sortRule) {
+                                ForEach(SortRule.allCases) { rule in
+                                    Text(rule.rawValue).tag(rule).font(.custom("Nexa Script Heavy", size: 16))
+                                }
+                            }
+                            .frame(maxWidth: .infinity)
+                        } label: {
+                            Button(action: {}) {
+                                Text($filterOptions.sortRule.id)
+                                    .font(.custom("Nexa Script Light", size: 16))
+                                    .frame(maxWidth: .infinity)
+                                
+                                Image(systemName: "arrow.down")
+                            }
+                            .padding(.horizontal, 12)
+                            .padding(.vertical, 6)
+                            .foregroundColor(.white)
+                            .cornerRadius(12)
+                            .background(Color(red: 0.039, green: 0.549, blue: 0.749))
+                            .clipShape(RoundedRectangle(cornerRadius: 12))
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 12)
+                                    .stroke(Color(red: 0.008, green: 0.157, blue: 0.251), lineWidth: 2)
+                            )
+                        }
+                    }
+                    .padding(.horizontal)
+                    .frame(maxWidth: .infinity)
+                    
+                    // Buttons
+                    HStack {
+                        Button("Cancel") {
+                            isVisible = false
+                        }
+                        .font(.custom("Nexa Script Heavy", size: 16))
+                        .foregroundColor(Color(red: 0.008, green: 0.282, blue: 0.451))
+                        
+                        Spacer()
+                        
+                        Button("Apply") {
+                            // Close and the user’s selections are already in filterOptions
+                            onApply()
+                            isVisible = false
+                        }
+                        .font(.custom("Nexa Script Heavy", size: 16))
                         .padding(.horizontal, 12)
                         .padding(.vertical, 6)
                         .foregroundColor(.white)
@@ -161,49 +192,20 @@ struct FilterModalView: View {
                                 .stroke(Color(red: 0.008, green: 0.157, blue: 0.251), lineWidth: 2)
                         )
                     }
+                    .padding(.horizontal)
+                    .padding(.bottom, 8)
                 }
-                .padding(.horizontal)
-                .frame(maxWidth: .infinity)
-                
-                // Buttons
-                HStack {
-                    Button("Cancel") {
-                        isVisible = false
-                    }
-                    .font(.custom("Nexa Script Heavy", size: 16))
-                    .foregroundColor(Color(red: 0.008, green: 0.282, blue: 0.451))
-                    
-                    Spacer()
-                    
-                    Button("Apply") {
-                        // Close and the user’s selections are already in filterOptions
-                        onApply()
-                        isVisible = false
-                    }
-                    .font(.custom("Nexa Script Heavy", size: 16))
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 6)
-                    .foregroundColor(.white)
-                    .cornerRadius(12)
-                    .background(Color(red: 0.039, green: 0.549, blue: 0.749))
-                    .clipShape(RoundedRectangle(cornerRadius: 12))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 12)
-                            .stroke(Color(red: 0.008, green: 0.157, blue: 0.251), lineWidth: 2)
-                    )
-                }
-                .padding(.horizontal)
-                .padding(.bottom, 8)
+                //            .frame(maxWidth: 350)
+                .background(Color(red: 0.533, green: 0.875, blue: 0.949))
+                .cornerRadius(12)
+                .clipShape(RoundedRectangle(cornerRadius: 12))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 12)
+                        .stroke(Color(red: 0.008, green: 0.157, blue: 0.251), lineWidth: 2)
+                )
+                .shadow(radius: 8)
             }
-            .frame(maxWidth: 350)
-            .background(Color(red: 0.533, green: 0.875, blue: 0.949))
-            .cornerRadius(12)
-            .clipShape(RoundedRectangle(cornerRadius: 12))
-            .overlay(
-                RoundedRectangle(cornerRadius: 12)
-                    .stroke(Color(red: 0.008, green: 0.157, blue: 0.251), lineWidth: 2)
-            )
-            .shadow(radius: 8)
+            .padding(.horizontal, UIDevice.current.userInterfaceIdiom == .pad ? 200 : 10)
         }
     }
 }

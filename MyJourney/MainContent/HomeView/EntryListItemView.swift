@@ -245,12 +245,14 @@ extension EntryListItem {
     """,
         imageURLs: [
 //            "images/test/07238b12-7eb5-42ca-888f-3d69c87a6258/image0.jpg",
-//            "images/test/07238b12-7eb5-42ca-888f-3d69c87a6258/image1.jpg",
+            "images/test/07238b12-7eb5-42ca-888f-3d69c87a6258/image1.jpg",
             "images/test/07238b12-7eb5-42ca-888f-3d69c87a6258/image2.jpg"
         ],
         timestamp: "2025-01-26T06:19:51Z",
-        locations: [LocationData(latitude: 47.61945051921359, longitude: -122.33775910597386, displayName: "Seattle"), LocationData(latitude: 47.61945051921359, longitude: -122.33775910597386, displayName: "Vancouver"), LocationData(latitude: 47.61945051921359, longitude: -122.33775910597386, displayName: "Delta"), LocationData(latitude: 47.61945051921359, longitude: -122.33775910597386, displayName: "Kyiv"), LocationData(latitude: 47.61945051921359, longitude: -122.33775910597386, displayName: "Vienna")],
-        tags: [TagData(key: "Home", value: "Seattle"), TagData(key: "Home", value: "Vancouver"), TagData(key: "Home", value: "Delta"), TagData(key: "Vacation", value: "Kyiv")]
+        locations: [],
+        tags: []
+//        locations: [LocationData(latitude: 47.61945051921359, longitude: -122.33775910597386, displayName: "Seattle"), LocationData(latitude: 47.61945051921359, longitude: -122.33775910597386, displayName: "Vancouver"), LocationData(latitude: 47.61945051921359, longitude: -122.33775910597386, displayName: "Delta"), LocationData(latitude: 47.61945051921359, longitude: -122.33775910597386, displayName: "Kyiv"), LocationData(latitude: 47.61945051921359, longitude: -122.33775910597386, displayName: "Vienna")],
+//        tags: [TagData(key: "Home", value: "Seattle"), TagData(key: "Home", value: "Vancouver"), TagData(key: "Home", value: "Delta"), TagData(key: "Vacation", value: "Kyiv")]
     )
 }
 

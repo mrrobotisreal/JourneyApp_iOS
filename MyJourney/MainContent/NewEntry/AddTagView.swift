@@ -16,7 +16,6 @@ struct AddTagView: View {
     var onTagAdded: (TagData) -> Void
     
     var body: some View {
-        NavigationView {
             ZStack {
                 Color.black.opacity(0.4)
                     .ignoresSafeArea()
@@ -25,7 +24,8 @@ struct AddTagView: View {
                         isAddTagViewVisible = false
                         print("clicked")
                     }
-                
+                    
+                VStack {
                     VStack(alignment: .leading, spacing: 20) {
                         Text("Tag key:")
                             .font(.custom("Nexa Script Heavy", size: 18))
@@ -43,12 +43,12 @@ struct AddTagView: View {
                             .autocapitalization(.none)
                             .textFieldStyle(RoundedBorderTextFieldStyle())
                         
-//                        Spacer()
+                        //                        Spacer()
                         
                         HStack {
                             Button("Cancel") {
                                 isAddTagViewVisible = false
-//                                dismiss()
+                                //                                dismiss()
                             }
                             .font(.custom("Nexa Script Light", size: 18))
                             .foregroundColor(Color(red: 0.008, green: 0.282, blue: 0.451))
@@ -64,7 +64,7 @@ struct AddTagView: View {
                                     value: trimmedValue.isEmpty ? nil : trimmedValue
                                 )
                                 onTagAdded(newTag)
-//                                dismiss()
+                                //                                dismiss()
                                 isAddTagViewVisible = false
                             }) {
                                 Text("Add tag")
@@ -91,8 +91,9 @@ struct AddTagView: View {
                         RoundedRectangle(cornerRadius: 12)
                             .stroke(Color(red: 0.008, green: 0.282, blue: 0.451), lineWidth: 2)
                     )
+                }
+                .padding(.horizontal, UIDevice.current.userInterfaceIdiom == .pad ? 200 : 10)
             }
-        }
     }
 }
 

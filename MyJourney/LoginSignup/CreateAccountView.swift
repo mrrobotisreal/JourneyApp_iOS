@@ -20,88 +20,72 @@ struct CreateAccountView: View {
     
     var body: some View {
         VStack {
-            Text(viewModel.isLoginVisible ? "Login" : "Create Account")
-                .font(.custom("Nexa Script", size: 32))
-                .foregroundColor(Color(red: 0.008, green: 0.157, blue: 0.251))
-                .padding(.vertical, 2)
-            
-            TextField("Username", text: $viewModel.username)
-                .font(.custom("Nexa Script Light", size: 18))
-                .foregroundColor(Color(red: 0.008, green: 0.157, blue: 0.251))
-                .padding(.horizontal)
-                .textFieldStyle(RoundedBorderTextFieldStyle())
-                .autocapitalization(.none)
-                .disableAutocorrection(true)
-            
-            if !viewModel.isLoginVisible {
-                if let isAvailable = viewModel.isUsernameAvailable {
-                    Text(isAvailable ? "✅ Username is available" : "❌ Username is taken")
-                        .foregroundColor(isAvailable ? .green : .red)
-                        .font(.custom("Nexa Script Heavy", size: 12))
-                } else if let error = viewModel.errorMessage {
-                    Text(error).foregroundColor(.red).font(.custom("Nexa Script Heavy", size: 12))
-                } else {
-//                    Text("Type at least 1 char... debouncing in action!")
-//                        .foregroundColor(.gray)
-//                        .font(.custom("Nexa Script Light", size: 12))
-                }
+            VStack {
+                Text(viewModel.isLoginVisible ? "Login" : "Create Account")
+                    .font(.custom("Nexa Script", size: 32))
+                    .foregroundColor(Color(red: 0.008, green: 0.157, blue: 0.251))
+                    .padding(.vertical, 2)
                 
-                if !errorMessage.isEmpty {
-                    Text(errorMessage)
-                        .foregroundColor(.red)
-                        .multilineTextAlignment(.center)
-                        .padding(.horizontal)
-                }
-            }
-            
-            SecureField("Password", text: $passwordViewModel.password)
-                .font(.custom("Nexa Script Light", size: 18))
-                .foregroundColor(Color(red: 0.008, green: 0.157, blue: 0.251))
-                .padding()
-                .textFieldStyle(RoundedBorderTextFieldStyle())
-                .autocapitalization(.none)
-                .disableAutocorrection(true)
-            
-            HStack {
-                Button(viewModel.isLoginVisible ? "Need an account?" : "Already have an account?") {
-                    viewModel.toggleIsLoginVisible()
-                }
-                .font(.custom("Nexa Script Light", size: 16))
-                .foregroundColor(Color(red: 0.008, green: 0.282, blue: 0.451))
+                TextField("Username", text: $viewModel.username)
+                    .font(.custom("Nexa Script Light", size: 18))
+                    .foregroundColor(Color(red: 0.008, green: 0.157, blue: 0.251))
+                    .padding(.horizontal)
+                    .textFieldStyle(RoundedBorderTextFieldStyle())
+                    .autocapitalization(.none)
+                    .disableAutocorrection(true)
                 
-                Spacer()
-                
-                if isLoading {
-                    ProgressView()
-                        .progressViewStyle(
-                            CircularProgressViewStyle(tint: Color(red: 0.008, green: 0.282, blue: 0.451))
-                        )
-                        .tint(Color(red: 0.008, green: 0.282, blue: 0.451))
-                        .padding()
-                } else {
-                    if viewModel.isLoginVisible {
-                        Button("Log In") {
-                            Task {
-                                await handleSubmitLogin()
-                            }
-                        }
-                            .padding(.horizontal, 12)
-                            .padding(.vertical, 6)
-                            .font(.custom("Nexa Script Heavy", size: 18))
-                            .foregroundColor(.white)
-                            .cornerRadius(12)
-                            .background(Color(red: 0.039, green: 0.549, blue: 0.749))
-                            .clipShape(RoundedRectangle(cornerRadius: 12))
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 12)
-                                    .stroke(Color(red: 0.008, green: 0.157, blue: 0.251), lineWidth: 2)
-                            )
+                if !viewModel.isLoginVisible {
+                    if let isAvailable = viewModel.isUsernameAvailable {
+                        Text(isAvailable ? "✅ Username is available" : "❌ Username is taken")
+                            .foregroundColor(isAvailable ? .green : .red)
+                            .font(.custom("Nexa Script Heavy", size: 12))
+                    } else if let error = viewModel.errorMessage {
+                        Text(error).foregroundColor(.red).font(.custom("Nexa Script Heavy", size: 12))
                     } else {
-                        Button("Create") {
-                            Task {
-                                await handleSubmitCreateAccount()
+                        //                    Text("Type at least 1 char... debouncing in action!")
+                        //                        .foregroundColor(.gray)
+                        //                        .font(.custom("Nexa Script Light", size: 12))
+                    }
+                    
+                    if !errorMessage.isEmpty {
+                        Text(errorMessage)
+                            .foregroundColor(.red)
+                            .multilineTextAlignment(.center)
+                            .padding(.horizontal)
+                    }
+                }
+                
+                SecureField("Password", text: $passwordViewModel.password)
+                    .font(.custom("Nexa Script Light", size: 18))
+                    .foregroundColor(Color(red: 0.008, green: 0.157, blue: 0.251))
+                    .padding()
+                    .textFieldStyle(RoundedBorderTextFieldStyle())
+                    .autocapitalization(.none)
+                    .disableAutocorrection(true)
+                
+                HStack {
+                    Button(viewModel.isLoginVisible ? "Need an account?" : "Already have an account?") {
+                        viewModel.toggleIsLoginVisible()
+                    }
+                    .font(.custom("Nexa Script Light", size: 16))
+                    .foregroundColor(Color(red: 0.008, green: 0.282, blue: 0.451))
+                    
+                    Spacer()
+                    
+                    if isLoading {
+                        ProgressView()
+                            .progressViewStyle(
+                                CircularProgressViewStyle(tint: Color(red: 0.008, green: 0.282, blue: 0.451))
+                            )
+                            .tint(Color(red: 0.008, green: 0.282, blue: 0.451))
+                            .padding()
+                    } else {
+                        if viewModel.isLoginVisible {
+                            Button("Log In") {
+                                Task {
+                                    await handleSubmitLogin()
+                                }
                             }
-                        }
                             .padding(.horizontal, 12)
                             .padding(.vertical, 6)
                             .font(.custom("Nexa Script Heavy", size: 18))
@@ -113,23 +97,42 @@ struct CreateAccountView: View {
                                 RoundedRectangle(cornerRadius: 12)
                                     .stroke(Color(red: 0.008, green: 0.157, blue: 0.251), lineWidth: 2)
                             )
+                        } else {
+                            Button("Create") {
+                                Task {
+                                    await handleSubmitCreateAccount()
+                                }
+                            }
+                            .padding(.horizontal, 12)
+                            .padding(.vertical, 6)
+                            .font(.custom("Nexa Script Heavy", size: 18))
+                            .foregroundColor(.white)
+                            .cornerRadius(12)
+                            .background(Color(red: 0.039, green: 0.549, blue: 0.749))
+                            .clipShape(RoundedRectangle(cornerRadius: 12))
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 12)
+                                    .stroke(Color(red: 0.008, green: 0.157, blue: 0.251), lineWidth: 2)
+                            )
+                        }
                     }
                 }
             }
+            .frame(maxWidth: 340)
+            .padding()
+            .cornerRadius(12)
+            .background(Color(red: 0.533, green: 0.875, blue: 0.949))
+            .clipShape(RoundedRectangle(cornerRadius: 12))
+            .overlay(
+                RoundedRectangle(cornerRadius: 12)
+                    .stroke(Color(red: 0.008, green: 0.282, blue: 0.451), lineWidth: 2)
+            )
+            .shadow(color: Color.black.opacity(0.2), radius: 5, x: 0, y: 3)
+            .alert(isPresented: $showSuccessMessage) {
+                Alert(title: Text(viewModel.isLoginVisible ? "Successful Login ✅" : "Account Created ✅"), message: Text(viewModel.isLoginVisible ? "Welcome back, \(viewModel.username)!" : "Welcome to My Journey, \(viewModel.username)!"), dismissButton: .default(Text("OK")))
+            }
         }
-        .frame(maxWidth: 340)
-        .padding()
-        .cornerRadius(12)
-        .background(Color(red: 0.533, green: 0.875, blue: 0.949))
-        .clipShape(RoundedRectangle(cornerRadius: 12))
-        .overlay(
-            RoundedRectangle(cornerRadius: 12)
-                .stroke(Color(red: 0.008, green: 0.282, blue: 0.451), lineWidth: 2)
-        )
-        .shadow(color: Color.black.opacity(0.2), radius: 5, x: 0, y: 3)
-        .alert(isPresented: $showSuccessMessage) {
-            Alert(title: Text(viewModel.isLoginVisible ? "Successful Login ✅" : "Account Created ✅"), message: Text(viewModel.isLoginVisible ? "Welcome back, \(viewModel.username)!" : "Welcome to My Journey, \(viewModel.username)!"), dismissButton: .default(Text("OK")))
-        }
+        .padding(.horizontal, UIDevice.current.userInterfaceIdiom == .pad ? 200 : 10)
     }
     
     private func handleSubmitCreateAccount() async {
