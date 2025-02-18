@@ -35,11 +35,16 @@ struct MyJourneyApp: App {
 }
 
 class AppState: ObservableObject {
+    @Published var userId: String? = nil
     @Published var username: String? = nil
+    @Published var apiKey: String? = nil
+    @Published var jwt: String? = nil
     @Published var isLoggedIn: Bool = false
     @Published var didFinishSplash: Bool = false
     @Published var selectedEntryId: String = ""
     @Published var selectedEntry: EntryListItem = .mock
     @Published var idLocations: [IdentifiableLocationData] = []
     @Published var idTags: [IdentifiableTagData] = []
+    @Published var font: String = "Default"
+    @Published var allEntries: [EntryListItem] = []
 }

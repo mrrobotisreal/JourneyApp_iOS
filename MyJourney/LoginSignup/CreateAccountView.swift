@@ -208,7 +208,7 @@ struct CreateAccountView: View {
 
 extension CreateAccountView {
     private func checkUsernameAvailability(_ username: String) async throws -> Bool {
-        guard let url = URL(string: "https://journeyapp.me/api/validate/username") else  {
+        guard let url = URL(string: "https://api.journeyapp.me/api/validate/username") else  {
             throw URLError(.badURL)
         }
         
@@ -261,7 +261,11 @@ extension CreateAccountView {
         let success = response.success
         
         if success {
+            appState.userId = response.userId
             appState.username = username
+            appState.apiKey = response.apiKey
+            appState.jwt = response.token
+            appState.font = response.font
             appState.isLoggedIn = true
         }
         
@@ -298,7 +302,11 @@ extension CreateAccountView {
         
         if success {
             print("Successfully logged in!")
+            appState.userId = response.userId
             appState.username = username
+            appState.font = response.font
+            appState.apiKey = response.apiKey
+            appState.jwt = response.token
             appState.isLoggedIn = true
         }
         
@@ -360,7 +368,7 @@ class UsernameViewModel: ObservableObject {
     }
     
     private func mockServerCheck(_ username: String) async throws -> Bool {
-        guard let url = URL(string: "https://journeyapp.me/api/validate/username") else  {
+        guard let url = URL(string: "https://api.journeyapp.me/api/validate/username") else  {
             throw URLError(.badURL)
         }
         

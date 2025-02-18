@@ -144,22 +144,6 @@ struct EditTagsView: View {
             }
             .padding(.horizontal, UIDevice.current.userInterfaceIdiom == .pad ? 200 : 10)
         }
-        .onAppear {
-            print("On appear called in EditTagsView!")
-            for idTag in idTags {
-                print("IDTag key == \(idTag.key)")
-                print("IDTag value == \(idTag.value ?? "-")")
-            }
-            print("Is idTags empty? \(idTags.isEmpty)")
-            print("idTags count is \(idTags.count)")
-            for tag in tags {
-                print("Tag key == \(tag.key)")
-                print("Tag value == \(tag.value ?? "-")")
-            }
-            print("Is tags empty? \(tags.isEmpty)")
-            print("tags count is \(tags.count)")
-            print("Should have printed all tag keys by now...")
-        }
     }
 }
 

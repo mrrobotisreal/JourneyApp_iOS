@@ -51,7 +51,7 @@ struct ContentView: View {
                                 //                                HomeView(path: $path)
                             case "settings":
                                 //                                SettingsView()
-                                HomeView(path: $path)
+                                SettingsView()
                             default:
                                 HomeView(path: $path)
                             }

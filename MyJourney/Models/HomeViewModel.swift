@@ -17,14 +17,14 @@ class HomeViewModel: ObservableObject {
     @Published var allUniqueLocations: [LocationData] = []
     @Published var allUniqueTags: [TagData] = []
     
-    func fetchEntries(username: String) {
+    func fetchEntries(apiKey: String, jwt: String, userId: String, username: String) {
         guard !self.isLoading, self.hasMore else { return }
         
         self.isLoading = true
         
         Task {
             do {
-                let newEntries = try await fetchEntriesFromServer(username: username, page: page, limit: 10)
+                let newEntries = try await fetchEntriesFromServer(apiKey: apiKey, jwt: jwt, userId: userId, username: username, page: page, limit: 20)
                 
                 if newEntries.count < 10 {
                     self.hasMore = false
@@ -44,21 +44,44 @@ class HomeViewModel: ObservableObject {
         }
     }
     
-    private func fetchEntriesFromServer(username: String, page: Int, limit: Int) async throws -> [EntryListItem] {
-        let base = "https://journeyapp.me/api/entries/list"
+    private func fetchEntriesFromServer(apiKey: String, jwt: String, userId: String, username: String, page: Int, limit: Int) async throws -> [EntryListItem] {
+        let base = "https://api.journeyapp.me/api/entries/list"
         guard var components = URLComponents(string: base) else {
             throw URLError(.badURL)
         }
         components.queryItems = [
             URLQueryItem(name: "user", value: username),
             URLQueryItem(name: "limit", value: "\(limit)"),
-            URLQueryItem(name: "page", value: "\(page)")
+            URLQueryItem(name: "page", value: "\(page)"),
+            URLQueryItem(name: "sortRule", value: "newest")
         ]
         guard let url = components.url else {
             throw URLError(.badURL)
         }
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.setValue(apiKey, forHTTPHeaderField: "X-API-Key")
+        request.setValue("Bearer \(jwt)", forHTTPHeaderField: "Authorization")
         
-        let (data, response) = try await URLSession.shared.data(from: url)
+//        do {
+//            try NetworkService.shared.addAuthenticationHeaders(to: &request)
+//        } catch {
+//            throw error
+//        }
+        
+        let task = URLSession.shared.dataTask(with: request) { data, response, error in
+            if let httpResponse = response as? HTTPURLResponse {
+                print("HTTP Status Code: \(httpResponse.statusCode)")
+            }
+            if let error = error {
+                print("Error: \(error.localizedDescription)")
+            }
+            // Handle data...
+        }
+        task.resume()
+        
+        let (data, response) = try await URLSession.shared.data(for: request)
         guard let httpResponse = response as? HTTPURLResponse, 200..<300 ~= httpResponse.statusCode else {
             throw URLError(.badServerResponse)
         }
@@ -68,12 +91,14 @@ class HomeViewModel: ObservableObject {
     }
     
     func searchEntries(
+        apiKey: String,
+        jwt: String,
         user: String,
         page: Int,
         limit: Int,
         filterOptions: FilterOptions,
         searchQuery: String
-    ) {
+    ) async {
         self.isLoading = true
         
         Task {
@@ -87,13 +112,21 @@ class HomeViewModel: ObservableObject {
 //                )
                 print("new search running...")
                 let newEntries = try await NetworkService.shared.searchEntries(
+                    apiKey: apiKey,
+                    jwt: jwt,
                     user: user,
                     page: page,
                     limit: limit,
                     searchQuery: searchQuery,
                     filterOptions: filterOptions
                 )
-                self.entries = newEntries
+                if (!self.entries.isEmpty && !newEntries.isEmpty) || (self.entries.isEmpty && !newEntries.isEmpty) {
+                    self.entries = []
+                    self.entries = newEntries
+                }
+                if (!self.entries.isEmpty && newEntries.isEmpty) || (self.entries.isEmpty && newEntries.isEmpty) {
+                    self.entries = []
+                }
             } catch {
                 print("Error search entries: \(error)")
                 // TODO: Handle error
@@ -165,7 +198,7 @@ class HomeViewModel: ObservableObject {
 //        return formatter.string(from: date)
 //    }
     
-    func fetchUniqueLocationsAndTags(user: String) {
+    func fetchUniqueLocationsAndTags(apiKey: String, jwt: String, user: String) {
         self.isLoading = true
         
         Task {
@@ -173,8 +206,8 @@ class HomeViewModel: ObservableObject {
 //                let uniqueLocations = try await fetchUniqueLocationsFromServer(user: user)
 //                let uniqueTags = try await fetchUniqueTagsFromServer(user: user)
                 
-                let uniqueLocations = try await NetworkService.shared.fetchUniqueLocations(user: user)
-                let uniqueTags = try await NetworkService.shared.fetchUniqueTags(user: user)
+                let uniqueLocations = try await NetworkService.shared.fetchUniqueLocations(apiKey: apiKey, jwt: jwt, user: user)
+                let uniqueTags = try await NetworkService.shared.fetchUniqueTags(apiKey: apiKey, jwt: jwt, user: user)
                 
                 self.allUniqueLocations = uniqueLocations
                 self.allUniqueTags = uniqueTags

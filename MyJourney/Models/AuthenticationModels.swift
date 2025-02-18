@@ -15,13 +15,27 @@ struct CreateAccountRequest: Codable {
 
 struct CreateAccountResponse: Codable {
     let success: Bool
-    let token: String?
-    let apiKey: String?
+    let userId: String
+    let username: String
+    let token: String
+    let apiKey: String
+    let font: String
     
     enum CodingKeys: String, CodingKey {
         case success
+        case userId
+        case username
         case token
-        case apiKey = "apiKey"
+        case apiKey
+        case font
+    }
+}
+
+struct DeleteAccountResponse: Codable {
+    let success: Bool
+    
+    enum CodingKeys: String, CodingKey {
+        case success
     }
 }
 
@@ -33,11 +47,19 @@ struct LoginRequest: Codable {
 
 struct LoginResponse: Codable {
     let success: Bool
-    let token: String?
+    let userId: String
+    let username: String
+    let token: String
+    let apiKey: String
+    let font: String
     
     enum CodingKeys: String, CodingKey {
         case success
+        case userId
+        case username
         case token
+        case apiKey
+        case font
     }
 }
 
@@ -52,20 +74,32 @@ struct SearchEntriesBody: Encodable {
 }
 
 struct CreateNewEntryRequest: Codable {
+    let userId: String
     let username: String
     let text: String
     let timestamp: String
+    let images: [String]?
     let locations: [LocationData]?
     let tags: [TagData]?
 }
 
 struct CreateNewEntryResponse: Decodable {
-    let uuid: String
+    let id: String
+    let userId: String
+    let username: String
+    let text: String
+    let timestamp: String
+    let lastUpdated: String
+    let images: [String]?
+    let locations: [LocationData]?
+    let tags: [TagData]?
 }
 
 struct UpdateEntryRequest: Codable {
     let id: String
+    let userId: String
     let username: String
+    let timestamp: String
     let text: String?
     let images: [String]?
     let locations: [LocationData]?
@@ -73,6 +107,88 @@ struct UpdateEntryRequest: Codable {
 }
 
 struct UpdateEntryResponse: Decodable {
+    let success: Bool
+}
+
+struct DeleteEntryRequest: Codable {
+    let userId: String
+    let timestamp: String
+}
+
+struct DeleteEntryResponse: Decodable {
+    let success: Bool
+}
+
+struct AddTagRequest: Codable {
+    let username: String
+    let userId: String
+    let timestamp: String
+    let entryId: String
+    let tags: [TagData]
+}
+
+struct AddTagResponse: Decodable {
+    let success: Bool
+}
+
+struct DeleteTagRequest: Codable {
+    let username: String
+    let userId: String
+    let timestamp: String
+    let entryId: String
+    let tags: [TagData]
+}
+
+struct DeleteTagResponse: Decodable {
+    let success: Bool
+}
+
+struct AddLocationRequest: Codable {
+    let username: String
+    let userId: String
+    let timestamp: String
+    let entryId: String
+    let locations: [LocationData]
+}
+
+struct AddLocationResponse: Decodable {
+    let success: Bool
+}
+
+struct DeleteLocationRequest: Codable {
+    let username: String
+    let userId: String
+    let timestamp: String
+    let entryId: String
+    let locations: [LocationData]
+}
+
+struct DeleteLocationResponse: Decodable {
+    let success: Bool
+}
+
+struct AddImageRequest: Codable {
+    let username: String
+    let userId: String
+    let timestamp: String
+    let entryId: String
+    let images: [String]
+}
+
+struct AddImageResponse: Decodable {
+    let success: Bool
+}
+
+struct DeleteImageRequest: Codable {
+    let username: String
+    let userId: String
+    let timestamp: String
+    let entryId: String
+    let images: [String]
+    let imageToDelete: String
+}
+
+struct DeleteImageResponse: Decodable {
     let success: Bool
 }
 

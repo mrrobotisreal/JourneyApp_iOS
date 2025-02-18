@@ -101,6 +101,7 @@ struct NewEntryView: View {
                             .padding()
                     } else {
                         Button(action: {
+                            print("Trying to fucking save the damn entry!!!!!")
                             submitEntry()
                         }) {
                             Text("Save")
@@ -535,22 +536,29 @@ struct NewEntryView: View {
 
 extension NewEntryView {
     private func submitEntry() {
-        guard let username = appState.username, !entryText.isEmpty else { return }
+        guard let username = appState.username, let userId = appState.userId, !entryText.isEmpty else { return }
         isSubmitting = true
         
         Task {
             do {
-                let uuid = try await NetworkService.shared.createNewEntry(
+                let response = try await NetworkService.shared.createNewEntry(
+                    apiKey: appState.apiKey ?? "",
+                    jwt: appState.jwt ?? "",
+                    userId: userId,
                     username: username,
                     text: entryText,
+                    images: [],
                     locations: locations.isEmpty ? nil : locations,
                     tags: tags.isEmpty ? nil : tags
                 )
-                print("Got uuid: \(uuid) from server")
                 
                 let isUploadedAndUpdated = try await NetworkService.shared.uploadImages(
+                    apiKey: appState.apiKey ?? "",
+                    jwt: appState.jwt ?? "",
+                    userId: userId,
                     username: username,
-                    uuid: uuid,
+                    timestamp: response.timestamp,
+                    id: response.id,
                     images: images
                 )
                 print("All images uploaded!")

@@ -51,6 +51,7 @@ class KeychainManager {
         let attributes: [String: Any] = [
             kSecValueData as String: data
         ]
+        print("UPDATE attributes: \(attributes.values)")
         
         let status = SecItemUpdate(query as CFDictionary, attributes as CFDictionary)
         guard status == errSecSuccess else {

@@ -14,7 +14,10 @@ struct EntryListItem: Identifiable, Decodable, Equatable, Hashable {
     let timestamp: String
     let locations: [LocationData]
     let tags: [TagData]
-    // add locations and tags later...
+    
+    var imageSignature: String {
+        imageURLs.joined(separator: "-")
+    }
     
     init(id: String, text: String, imageURLs: [String], timestamp: String, locations: [LocationData], tags: [TagData]) {
         self.id = id

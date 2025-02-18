@@ -195,7 +195,7 @@ struct EntryListItemView: View {
             RoundedRectangle(cornerRadius: 12)
                 .stroke(Color(red: 0.008, green: 0.157, blue: 0.251), lineWidth: 2)
         )
-        .shadow(color: Color.black.opacity(0.9), radius: 7, x: 0, y: 5)
+        .shadow(color: Color.black.opacity(0.9), radius: 4, x: 0, y: 3)
         .onAppear {
             if !entryListItem.imageURLs.isEmpty && presignedURLs.isEmpty {
                 isLoading = true
@@ -217,7 +217,7 @@ struct EntryListItemView: View {
         
         for (_, key) in entryListItem.imageURLs.enumerated() {
             do {
-                let presignedURL = try await NetworkService.shared.getPresignedURLForKey(key)
+                let presignedURL = try await NetworkService.shared.getPresignedURLForKey(key, apiKey: appState.apiKey ?? "", jwt: appState.jwt ?? "")
                 tempURLs.append(presignedURL)
             } catch {
                 print("Error getting presigned URL for \(key): \(error)")
@@ -244,30 +244,28 @@ extension EntryListItem {
     Here is -strikethrough- and {color: red}red text{color} and nesting like *bold ~underlined nested~ inside*.
     """,
         imageURLs: [
-//            "images/test/07238b12-7eb5-42ca-888f-3d69c87a6258/image0.jpg",
+            "images/test/07238b12-7eb5-42ca-888f-3d69c87a6258/image0.jpg",
             "images/test/07238b12-7eb5-42ca-888f-3d69c87a6258/image1.jpg",
             "images/test/07238b12-7eb5-42ca-888f-3d69c87a6258/image2.jpg"
         ],
         timestamp: "2025-01-26T06:19:51Z",
         locations: [],
         tags: []
-//        locations: [LocationData(latitude: 47.61945051921359, longitude: -122.33775910597386, displayName: "Seattle"), LocationData(latitude: 47.61945051921359, longitude: -122.33775910597386, displayName: "Vancouver"), LocationData(latitude: 47.61945051921359, longitude: -122.33775910597386, displayName: "Delta"), LocationData(latitude: 47.61945051921359, longitude: -122.33775910597386, displayName: "Kyiv"), LocationData(latitude: 47.61945051921359, longitude: -122.33775910597386, displayName: "Vienna")],
-//        tags: [TagData(key: "Home", value: "Seattle"), TagData(key: "Home", value: "Vancouver"), TagData(key: "Home", value: "Delta"), TagData(key: "Vacation", value: "Kyiv")]
     )
 }
 
-#Preview {
-    let testAppState = AppState()
-    testAppState.isLoggedIn = true
-    testAppState.username = "test"
-    
-    return EntryListViewPreviewWrapper().environmentObject(testAppState)
-}
-
-struct EntryListViewPreviewWrapper: View {
-    @State private var path = NavigationPath()
-    
-    var body: some View {
-        EntryListItemView(entryListItem: .mock, query: "wrap")
-    }
-}
+//#Preview {
+//    let testAppState = AppState()
+//    testAppState.isLoggedIn = true
+//    testAppState.username = "test"
+//    
+//    return EntryListViewPreviewWrapper().environmentObject(testAppState)
+//}
+//
+//struct EntryListViewPreviewWrapper: View {
+//    @State private var path = NavigationPath()
+//    
+//    var body: some View {
+//        EntryListItemView(entryListItem: .mock, query: "wrap")
+//    }
+//}

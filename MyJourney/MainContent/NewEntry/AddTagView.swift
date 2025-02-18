@@ -22,7 +22,6 @@ struct AddTagView: View {
                     .onTapGesture {
                         // Tapping outside closes the modal
                         isAddTagViewVisible = false
-                        print("clicked")
                     }
                     
                 VStack {
