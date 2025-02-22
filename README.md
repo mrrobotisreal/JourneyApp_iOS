@@ -1,12 +1,12 @@
 # JourneyApp.me
 
-![Cover Image](https://winapps-solutions-llc.s3.us-west-2.amazonaws.com/products/journey-app/MyJourneyDocumentationCoverImage.png)
+![Cover Image](https://winapps-solutions-llc.s3.us-west-2.amazonaws.com/products/journey-app/JourneyAppDocumentationCoverImage.png)
 
 ### What is "JourneyApp.me"?
 
 > _"The perfect companion for your introspective journey. Ignite your creativity while keeping your thoughts organized and your memories accessible at the touch of a finger."_
 
-**JourneyApp.me** is a journaling app written entirely in Swift for iOS. It provides users with the ability to create an account, write journal entries with advanced markdown (headings, lists, checkboxes, bold, italic, strikethrough, code, colored text, nested tokens, etc.), images, locations, and tags. The entries all include a date, and can be searched and filtered with optimized search algorithms as well as custom tags created by the user. Users are able to log in on other devices and still maintain access to their data (all data is stored securely on a server and only accessible to the user who created it), and all entries are able to be downloaded to the device for offline viewing and editing. Entries that are created or edited while the user is offline will be stored on the device until a network connection is established again, at which point the data will be sent to the server and stored. When a user has logged in, a session is created and a JSON Web Token is stored on the device which allows the user to remain logged in for a configurable amount of time, but it's defaulted to 7 days and is revoked upon clicking to logout.
+<strong style="color: orange;">JourneyApp.me</strong> is a journaling app written entirely in <strong style="color: orange;">Swift</strong> for <strong style="color: orange;">iOS</strong>. Users can create an account, write journal entries with <strong style="color: orange;">advanced markdown</strong> (_headings_, _lists_, _checkboxes_, _bold_, _italic_, _strikethrough_, _code_, _colored text_, _nested tokens_, etc.), attach <strong style="color: orange;">images</strong>, <strong style="color: orange;">locations</strong>, and <strong style="color: orange;">tags</strong>. Entries are <strong style="color: orange;">listed by date</strong> and <strong style="color: orange;">can be sorted</strong> _newest to oldest_ or _oldest to newest_, <strong style="color: orange;">search all entries</strong> for _specific text_, <strong style="color: orange;">filter entries</strong> _by locations_ or _tags_ or a specified timeframe. <strong style="color: orange;">Data is encrypted</strong> and stored on the server, and each account is further <strong style="color: orange;">secured via JSON Web Tokens (JWT)</strong> for _user sessions_ and via a <strong style="color: orange;">unique API key</strong> only held by the user, so if you're not the owner then _you can't view or edit the data_. <strong style="color: orange;">Images are encrypted</strong> and _stored securely on Amazon S3_, and are _only accessible via a pre-signed URL_ held by the owner of the account.
 
 ## Table of Contents
 
@@ -21,7 +21,7 @@
 
 ## Contact info
 
-**Developed by:** Mitchell Wintrow
+**Developed by:** <span style="color: orange;">Mitchell Wintrow</span>
 
 **Email**: owner@winapps.io, mitchellwintrow@gmail.com
 
@@ -33,8 +33,8 @@
 - 📍 Add locations to your entries
 - 🏷️ Add custom tags for better organization and optimize search filters
 - 🕸️ Sign in and access your data across devices
-- 📲 Download entries for offline viewing (_in development..._)
-- ⬆️ Create entries offline that are uploaded when connection returns (_in development..._)
+- 📲 Download entries for offline viewing (🚧 _in development..._ 🛠️)
+- ⬆️ Create entries offline that are uploaded when connection returns (🚧 _in development..._ 🛠️)
 
 ## Demo
 
@@ -72,9 +72,13 @@ More markdown syntax customizations coming soon...
 
 ## Documentation
 
-You can find the official **JourneyApp.me** documentation here:
+You can find the official **JourneyApp.me** <em style="color: orange;">Documentation</em> here:
 
-[Official **JourneyApp.me** Documentation](https://vigorous-helicona-f1e.notion.site/My-Journey-Official-Documentation-18426f695b8e805ab8efc17f6634877d)
+- [Official **Documentation**](https://winapps.io/projects/journey-app/documentation)
+
+You can find the official **JourneyApp.me** <em style="color: orange;">Privacy Policy</em> here:
+
+- [Official **Privacy Policy**](https://winapps.io/projects/journey-app/privacy-policy)
 
 ## Technologies
 
@@ -123,6 +127,6 @@ For the full license text, visit [Creative Commons License](https://creativecomm
 
 ---
 
-This product is developed and owned by [WinApps Solutions LLC ©2024](https://winapps.io)
+This product is developed and owned by [WinApps (Mitchell Wintrow) ©2024](https://winapps.io)
 
-![WinApps Logo](./WinAppsLogo.svg)
+<!-- ![WinApps Logo](./WinAppsLogo.svg) -->
